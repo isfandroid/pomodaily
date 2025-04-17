@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <!--LIGHT THEME-->
+    <color name="light_primary">#305880</color> <!--focus & cta buttons-->
+    <color name="light_on_primary">#FFFFFF</color> <!--text/icon on blue buttons-->
+    <color name="light_primary_variant">#357ABD</color> <!--hover/pressed states-->
+    <color name="light_primary_overlay">#14305880</color>
+    <color name="light_secondary">#F5A623</color> <!--progress rings, highlights-->
+    <color name="light_on_secondary">#000000</color>
+    <color name="light_background">#FFFFFF</color> <!--main background-->
+    <color name="light_on_background">#2C2C2C</color> <!--main text color-->
+    <color name="light_surface">#F8F9FA</color> <!--card/sheet background-->
+    <color name="light_on_surface">#4F4F4F</color> <!--subdued text: notes, timestamps-->
+    <color name="light_error">#D32F2F</color> <!--alerts/conflicts-->
+    <color name="light_on_error">#FFFFFF</color>
+
+    <!--DARK THEME-->
+    <color name="dark_primary">#82B1FF</color> <!--focus & cta buttons-->
+    <color name="dark_on_primary">#000000</color> <!--text/icon on blue buttons-->
+    <color name="dark_primary_variant">#4A90E2</color> <!--hover/pressed states-->
+    <color name="dark_primary_overlay">#1F82B1FF</color>
+    <color name="dark_secondary">#FFB74D</color> <!--progress rings, highlights-->
+    <color name="dark_on_secondary">#FFB74D</color>
+    <color name="dark_background">#121212</color> <!--main background-->
+    <color name="dark_on_background">#E0E0E0</color> <!--main text color-->
+    <color name="dark_surface">#1E1E1E</color> <!--card/sheet background-->
+    <color name="dark_on_surface">#BDBDBD</color> <!--subdued text: notes, timestamps-->
+    <color name="dark_error">#EF5350</color> <!--alerts/conflicts-->
+    <color name="dark_on_error">#EF5350</color>
+
+    <!--GENERAL-->
+    <color name="black">#000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
