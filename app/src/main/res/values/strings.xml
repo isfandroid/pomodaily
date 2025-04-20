@@ -1,6 +1,17 @@
 <resources>
     <string name="app_name">PomoDaily</string>
 
+    <string name="txt_title_on_boarding_1">Stay Focused, Build Habits</string>
+    <string name="txt_title_on_boarding_2">Your Data, Your Device</string>
+    <string name="txt_title_on_boarding_3">Ready When You Are</string>
+    <string name="txt_desc_on_boarding_1">Complete your daily tasks using Pomodoro sessions — one focus block at a time. Stick to your routine and build lasting habits.</string>
+    <string name="txt_desc_on_boarding_2">Everything is stored locally on your phone. Don’t clear the app data — your progress lives there.</string>
+    <string name="txt_desc_on_boarding_3">Start by setting up your daily tasks — or jump right in and begin a focus session. Your flow, your choice.</string>
+
     <string name="txt_app_logo">App Logo</string>
     <string name="txt_splash">Splash</string>
+    <string name="txt_on_boarding">OnBoarding</string>
+    <string name="txt_illustration">Illustration</string>
+    <string name="txt_create_daily_tasks">Create Daily Tasks</string>
+    <string name="txt_start_pomodoro">Start Pomodoro</string>
 </resources>

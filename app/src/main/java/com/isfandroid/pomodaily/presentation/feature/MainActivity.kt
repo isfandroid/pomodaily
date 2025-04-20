@@ -10,9 +10,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.fragment
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.ActivityMainBinding
+import com.isfandroid.pomodaily.presentation.feature.onboarding.OnBoardingContainerFragment
 import com.isfandroid.pomodaily.presentation.feature.splash.SplashFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -40,6 +43,9 @@ class MainActivity : AppCompatActivity() {
             fragment<SplashFragment, Splash> {
                 label = getString(R.string.txt_splash)
             }
+            fragment<OnBoardingContainerFragment, OnBoarding> {
+                label = getString(R.string.txt_on_boarding)
+            }
         }
     }
 }
@@ -47,3 +53,6 @@ class MainActivity : AppCompatActivity() {
 // SCREENS
 @Serializable
 data object Splash
+
+@Serializable
+data object OnBoarding

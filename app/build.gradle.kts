@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.ksp)
+    alias(libs.plugins.google.dagger.hilt)
 }
 
 android {
@@ -53,6 +55,13 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
+
+    // DATA - DATASTORE
+    implementation(libs.androidx.datastore)
+
+    // DI
+    implementation(libs.dagger.hilt)
+    ksp(libs.dagger.hilt.compiler)
 
     // TESTING
     testImplementation(libs.junit)
