@@ -5,6 +5,10 @@
         <item name="android:fontFamily">@font/inter_bold</item>
         <item name="android:lineSpacingMultiplier">1.0</item>
         <item name="android:lineSpacingExtra">0dp</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
+    </style>
+    <style name="Text.Bold.64" parent="Text.Bold">
+        <item name="android:textSize">64sp</item>
     </style>
     <style name="Text.Bold.24" parent="Text.Bold">
         <item name="android:textSize">24sp</item>
@@ -17,21 +21,22 @@
     </style>
 
     <!--TYPOGRAPHY - SEMIBOLD - POPPINS-->
-    <style name="Text.SmiBold" parent="Widget.AppCompat.TextView">
+    <style name="Text.SemiBold" parent="Widget.AppCompat.TextView">
         <item name="android:fontFamily">@font/poppins_semi_bold</item>
         <item name="android:lineSpacingMultiplier">1.0</item>
         <item name="android:lineSpacingExtra">0dp</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
-    <style name="Text.SmiBold.24" parent="Text.SmiBold">
+    <style name="Text.SemiBold.24" parent="Text.SemiBold">
         <item name="android:textSize">24sp</item>
     </style>
-    <style name="Text.SmiBold.20" parent="Text.SmiBold">
+    <style name="Text.SemiBold.20" parent="Text.SemiBold">
         <item name="android:textSize">20sp</item>
     </style>
-    <style name="Text.SmiBold.18" parent="Text.SmiBold">
+    <style name="Text.SemiBold.18" parent="Text.SemiBold">
         <item name="android:textSize">18sp</item>
     </style>
-    <style name="Text.SmiBold.16" parent="Text.SmiBold">
+    <style name="Text.SemiBold.16" parent="Text.SemiBold">
         <item name="android:textSize">16sp</item>
     </style>
 
@@ -40,6 +45,7 @@
         <item name="android:fontFamily">@font/worksans_regular</item>
         <item name="android:lineSpacingMultiplier">1.0</item>
         <item name="android:lineSpacingExtra">0dp</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
     <style name="Text.Regular.16" parent="Text.Regular">
         <item name="android:textSize">16sp</item>

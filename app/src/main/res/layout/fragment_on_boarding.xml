@@ -17,12 +17,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tv_title"
+        app:layout_constraintBottom_toTopOf="@id/tv_active_task_title"
         app:layout_constraintVertical_chainStyle="packed"
         tools:src="@drawable/img_app_logo"
         />
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tv_active_task_title"
         style="@style/Text.Bold.24"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
         android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_active_task_title"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:text="This is a sample of a description. The purpose is to describe the related content based on the title."
         />

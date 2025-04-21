@@ -14,4 +14,7 @@
     <string name="txt_illustration">Illustration</string>
     <string name="txt_create_daily_tasks">Create Daily Tasks</string>
     <string name="txt_start_pomodoro">Start Pomodoro</string>
+    <string name="ic_tasks">Tasks</string>
+    <string name="txt_statistics">Statistics</string>
+    <string name="txt_settings">Settings</string>
 </resources>

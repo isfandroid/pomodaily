@@ -13,6 +13,7 @@
 
         <!-- Background and Surface -->
         <item name="android:colorBackground">@color/light_background</item>
+        <item name="backgroundColor">@color/light_background</item>
         <item name="colorOnBackground">@color/light_on_background</item>
         <item name="colorSurface">@color/light_surface</item>
         <item name="colorOnSurface">@color/light_on_surface</item>

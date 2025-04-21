@@ -13,6 +13,7 @@
 
         <!-- Background and Surface -->
         <item name="android:colorBackground">@color/dark_background</item>
+        <item name="backgroundColor">@color/dark_background</item>
         <item name="colorOnBackground">@color/dark_on_background</item>
         <item name="colorSurface">@color/dark_surface</item>
         <item name="colorOnSurface">@color/dark_on_surface</item>
