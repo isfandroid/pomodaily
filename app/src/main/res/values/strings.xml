@@ -11,10 +11,46 @@
     <string name="txt_app_logo">App Logo</string>
     <string name="txt_splash">Splash</string>
     <string name="txt_on_boarding">OnBoarding</string>
+    <string name="txt_tasks">Tasks</string>
+
     <string name="txt_illustration">Illustration</string>
     <string name="txt_create_daily_tasks">Create Daily Tasks</string>
     <string name="txt_start_pomodoro">Start Pomodoro</string>
-    <string name="ic_tasks">Tasks</string>
+    <string name="txt_get_started">Get Started</string>
     <string name="txt_statistics">Statistics</string>
     <string name="txt_settings">Settings</string>
+    <string name="txt_back">Back</string>
+    <string name="txt_title">Title</string>
+    <string name="txt_ask_task_name">What are you working on?</string>
+    <string name="txt_estimated_pomodoro_session">Estimated Pomodoro Session</string>
+    <string name="txt_decrement">Decrement</string>
+    <string name="txt_increment">Increment</string>
+    <string name="txt_cancel">Cancel</string>
+    <string name="txt_save">Save</string>
+    <string name="txt_name">Name</string>
+    <string name="txt_edit">Edit</string>
+    <string name="txt_submit">Submit</string>
+    <string name="txt_msg_update_tasks_failed">Failed to update tasks.</string>
+    <string name="txt_msg_update_tasks_successful">Tasks updated successfully.</string>
+    <string name="txt_msg_title_load_tasks_failed">Couldn\'t Load Tasks</string>
+    <string name="txt_msg_desc_load_tasks_failed">We\'re having trouble retrieving your tasks right now. Please contact the app support.</string>
+    <string name="txt_retry">Retry</string>
+    <string name="txt_empty_data">Empty Data</string>
+    <string name="txt_msg_no_tasks_for_this_day">No tasks for this day.</string>
+    <string name="txt_add_tasks">Add Tasks</string>
+    <string name="txt_msg_field_required">This field is required.</string>
+
+    <string name="txt_value_pomodoro_sessions">%d Pomodoro Sessions</string>
+    <string name="txt_value_est_pomodoro">%d/%d</string>
+    <string name="txt_value_minutes">%d minutes</string>
+    <string name="txt_pomodoro">Pomodoro</string>
+    <string name="txt_restart">Restart</string>
+    <string name="txt_pomodoro_sessions">Pomodoro Sessions</string>
+    <string name="txt_delete">Delete</string>
+    <string name="txt_notes">Notes</string>
+    <string name="txt_msg_hint_task_notes">Optional note (e.g., deadline, location, or other details)</string>
+    <string name="txt_add_task">Add Task</string>
+    <string name="txt_skip">Skip</string>
+    <string name="txt_msg_delete_task_failed">Failed to delete task</string>
+    <string name="txt_msg_delete_task_successful">Task deleted successfully.</string>
 </resources>

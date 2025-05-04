@@ -2,4 +2,5 @@
 <resources>
     <!--CUSTOM COLOR NAMES-->
     <attr name="colorPrimaryOverlay" format="color" />
+    <attr name="colorOnError" format="color" />
 </resources>

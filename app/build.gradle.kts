@@ -59,6 +59,10 @@ dependencies {
     // DATA - DATASTORE
     implementation(libs.androidx.datastore)
 
+    // DATA - ROOM
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
     // DI
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.compiler)

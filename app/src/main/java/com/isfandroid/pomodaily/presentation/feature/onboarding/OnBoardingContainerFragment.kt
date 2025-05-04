@@ -9,12 +9,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.viewpager2.widget.ViewPager2
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentOnBoardingContainerBinding
 import com.isfandroid.pomodaily.presentation.common.adapter.ViewPagerFragmentsAdapter
-import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_CREATE_DAILY_TASKS
-import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_POMODORO
+import com.isfandroid.pomodaily.presentation.feature.Pomodoro
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,7 +41,6 @@ class OnBoardingContainerFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews()
         observeData()
     }
@@ -74,8 +74,8 @@ class OnBoardingContainerFragment: Fragment() {
                             viewDotIndicatorMiddle.setBackgroundResource(R.drawable.oval_onsurface)
                             viewDotIndicatorEnd.setBackgroundResource(R.drawable.oval_onsurface)
 
-                            btnStartPomodoro.visibility = View.INVISIBLE
-                            btnCreateTasks.visibility = View.INVISIBLE
+                            btnSkip.visibility = View.VISIBLE
+                            btnGetStarted.visibility = View.INVISIBLE
                         }
                         // OnBoarding End
                         fragments.lastIndex -> {
@@ -83,8 +83,8 @@ class OnBoardingContainerFragment: Fragment() {
                             viewDotIndicatorMiddle.setBackgroundResource(R.drawable.oval_onsurface)
                             viewDotIndicatorEnd.setBackgroundResource(R.drawable.oval_primary)
 
-                            btnStartPomodoro.visibility = View.VISIBLE
-                            btnCreateTasks.visibility = View.VISIBLE
+                            btnSkip.visibility = View.INVISIBLE
+                            btnGetStarted.visibility = View.VISIBLE
                         }
                         // OnBoarding Middle
                         else -> {
@@ -92,8 +92,8 @@ class OnBoardingContainerFragment: Fragment() {
                             viewDotIndicatorMiddle.setBackgroundResource(R.drawable.oval_primary)
                             viewDotIndicatorEnd.setBackgroundResource(R.drawable.oval_onsurface)
 
-                            btnStartPomodoro.visibility = View.INVISIBLE
-                            btnCreateTasks.visibility = View.INVISIBLE
+                            btnSkip.visibility = View.VISIBLE
+                            btnGetStarted.visibility = View.INVISIBLE
                         }
                     }
                 }
@@ -101,12 +101,12 @@ class OnBoardingContainerFragment: Fragment() {
             vpContainer.adapter = adapter
             vpContainer.registerOnPageChangeCallback(pageChangeCallback)
 
-            btnStartPomodoro.setOnClickListener {
-                viewModel.finishOnBoardingAndNavigate(NAV_DESTINATION_POMODORO)
+            btnSkip.setOnClickListener {
+                viewModel.finishOnBoarding()
             }
 
-            btnCreateTasks.setOnClickListener {
-                viewModel.finishOnBoardingAndNavigate(NAV_DESTINATION_CREATE_DAILY_TASKS)
+            btnGetStarted.setOnClickListener {
+                viewModel.finishOnBoarding()
             }
         }
     }
@@ -114,14 +114,22 @@ class OnBoardingContainerFragment: Fragment() {
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.navDirection.collectLatest {
-                    when(it) {
-                        NAV_DESTINATION_POMODORO -> {
-                            // TODO: Navigate to Pomodoro Session
-                        }
-                        NAV_DESTINATION_CREATE_DAILY_TASKS -> {
-                            // TODO: Navigate to Create Daily Tasks
-                        }
+                viewModel.isOnBoardingFinished.collectLatest {
+                    if (it) {
+                        findNavController().navigate(
+                            route = Pomodoro,
+                            navOptions = navOptions {
+                                popUpTo(0) {
+                                    inclusive = true
+                                }
+                                anim {
+                                    enter = R.anim.slide_in_right
+                                    exit = R.anim.slide_out_left
+                                    popEnter = R.anim.slide_in_left
+                                    popExit = R.anim.slide_out_right
+                                }
+                            },
+                        )
                     }
                 }
             }

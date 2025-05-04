@@ -1,0 +1,241 @@
+package com.isfandroid.pomodaily.presentation.feature.task
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.chip.Chip
+import com.isfandroid.pomodaily.R
+import com.isfandroid.pomodaily.databinding.FragmentTasksBinding
+import com.isfandroid.pomodaily.presentation.common.adapter.TaskRecyclerAdapter
+import com.isfandroid.pomodaily.presentation.common.decoration.LinearItemDecoration
+import com.isfandroid.pomodaily.presentation.resource.UiState
+import com.isfandroid.pomodaily.utils.Constant.DAYS_OF_WEEK
+import com.isfandroid.pomodaily.utils.Helper.showSnackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
+@AndroidEntryPoint
+class TasksFragment: Fragment() {
+
+    private var _binding: FragmentTasksBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel by viewModels<TaskViewModel>()
+
+    private val taskAdapter by lazy {
+        TaskRecyclerAdapter(
+            onItemClick = { task ->
+                viewModel.deleteNewTaskEntry()
+                if (!task.isExpanded) viewModel.setExpandedTask(task.task.id)
+            },
+            onDeleteClick = { task ->
+                viewModel.deleteTask(task)
+            },
+            onCancelClick = { _ ->
+                viewModel.deleteNewTaskEntry()
+            },
+            onSaveClick = { task ->
+                viewModel.updateTask(task)
+            }
+        )
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentTasksBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initViews()
+        observeData()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun initViews() {
+        with(binding) {
+            // App Bar
+            appBar.tvTitle.text = getString(R.string.txt_tasks)
+            appBar.btnBack.setOnClickListener { findNavController().navigateUp() }
+
+            // Chips - Days of Week
+            DAYS_OF_WEEK.forEach { day ->
+                val dayId = day["id"] as Int
+                val dayName = day["name"] as String
+                createDaysChip(dayId, dayName)
+            }
+
+            // RV - Tasks
+            rvItems.layoutManager = LinearLayoutManager(requireContext())
+            rvItems.adapter = taskAdapter
+            rvItems.addItemDecoration(
+                LinearItemDecoration(
+                    topSpace = resources.getDimensionPixelSize(R.dimen.dimen_0),
+                    bottomSpace = resources.getDimensionPixelSize(R.dimen.dimen_16),
+                    rightSpace = resources.getDimensionPixelSize(R.dimen.dimen_0),
+                    leftSpace = resources.getDimensionPixelSize(R.dimen.dimen_0),
+                    addBottomSpacingForLastItem = true
+                )
+            )
+
+            // Buttons
+            btnAdd.setOnClickListener {
+                viewModel.addNewTaskEntry()
+            }
+        }
+    }
+
+    private fun observeData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.selectedDayId.collectLatest {
+                        binding.cgDays.check(it)
+                    }
+                }
+
+                launch {
+                    viewModel.tasks.collectLatest {
+                        with(binding) {
+                            if (it != null) {
+                                if (it.isEmpty()) {
+                                    rvItems.isVisible = false
+                                    layoutError.root.isVisible = true
+                                    btnAdd.isVisible = false
+
+                                    layoutError.tvTitle.text = getString(R.string.txt_empty_data)
+                                    layoutError.tvDesc.text = getString(R.string.txt_msg_no_tasks_for_this_day)
+                                    layoutError.btnAction.text = getString(R.string.txt_add_task)
+                                    layoutError.btnAction.setOnClickListener {
+                                        viewModel.addNewTaskEntry()
+                                    }
+                                }
+                                else {
+                                    rvItems.isVisible = true
+                                    layoutError.root.isVisible = false
+                                    btnAdd.isVisible = !it.any { task ->
+                                        task.task.id == null
+                                    }
+
+                                    taskAdapter.submitList(it)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.getTasksResult.collectLatest {
+                        with(binding) {
+                            when(it) {
+                                is UiState.Loading -> {
+                                    // TODO: showTaskLoading(true)
+                                }
+                                is UiState.Error -> {
+                                    // TODO: showTaskLoading(false)
+                                    rvItems.isVisible = false
+                                    layoutError.root.isVisible = true
+                                    btnAdd.isVisible = false
+
+                                    layoutError.tvTitle.text = getString(R.string.txt_msg_title_load_tasks_failed)
+                                    layoutError.tvDesc.text = getString(R.string.txt_msg_desc_load_tasks_failed)
+                                    layoutError.btnAction.text = getString(R.string.txt_retry)
+                                    layoutError.btnAction.setOnClickListener {
+                                        viewModel.getTasks()
+                                    }
+                                }
+                                is UiState.Success -> {
+                                    // TODO: showTaskLoading(false)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.updateTaskResult.collectLatest {
+                        when(it) {
+                            is UiState.Loading -> {
+                                // TODO: showUpdateTaskLoading(true)
+                            }
+                            is UiState.Error -> {
+                                // TODO: showUpdateTaskLoading(false)
+                                showSnackbar(
+                                    view = binding.root,
+                                    message = getString(R.string.txt_msg_update_tasks_failed),
+                                    isError = true
+                                )
+                            }
+                            is UiState.Success -> {
+                                // TODO: showUpdateTaskLoading(false)
+                                showSnackbar(
+                                    view = binding.root,
+                                    message = getString(R.string.txt_msg_update_tasks_successful),
+                                    isError = false
+                                )
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.deleteTaskResult.collectLatest {
+                        when(it) {
+                            is UiState.Loading -> {
+                                // TODO: showDeleteTaskLoading(true)
+                            }
+                            is UiState.Error -> {
+                                // TODO: showDeleteTaskLoading(false)
+                                showSnackbar(
+                                    view = binding.root,
+                                    message = getString(R.string.txt_msg_delete_task_failed),
+                                    isError = true
+                                )
+                            }
+                            is UiState.Success -> {
+                                // TODO: showDeleteTaskLoading(false)
+                                showSnackbar(
+                                    view = binding.root,
+                                    message = getString(R.string.txt_msg_delete_task_successful),
+                                    isError = false
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun createDaysChip(dayId: Int, dayName: String): Chip {
+        val chip = Chip(context)
+        chip.setEnsureMinTouchTargetSize(false)
+        chip.text = dayName
+        chip.isCheckable = true
+        chip.setOnClickListener {
+            viewModel.selectDay(dayId)
+        }
+
+        binding.cgDays.addView(chip)
+        return chip
+    }
+}

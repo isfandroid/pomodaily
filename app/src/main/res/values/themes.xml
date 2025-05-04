@@ -21,6 +21,9 @@
         <!-- Error color -->
         <item name="colorError">@color/light_error</item>
         <item name="colorOnError">@color/light_on_error</item>
+
+        <!--COMPONENT - Chip-->
+        <item name="chipStyle">@style/BaseChip</item>
     </style>
 
     <style name="Theme.PomoDaily" parent="Base.Theme.PomoDaily" />

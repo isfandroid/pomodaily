@@ -14,11 +14,13 @@ import androidx.navigation.navOptions
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentSplashBinding
 import com.isfandroid.pomodaily.presentation.feature.OnBoarding
+import com.isfandroid.pomodaily.presentation.feature.Tasks
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_ON_BOARDING
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_SCHEDULE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashFragment: Fragment() {
@@ -50,8 +52,25 @@ class SplashFragment: Fragment() {
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.navigateToDestination.collectLatest {
+                viewModel.navDestination.collectLatest {
                     when (it) {
+                        NAV_DESTINATION_SCHEDULE -> {
+                            // TODO: Navigate to Schedule
+                            findNavController().navigate(
+                                route = Tasks,
+                                navOptions = navOptions {
+                                    popUpTo(0) {
+                                        inclusive = true
+                                    }
+                                    anim {
+                                        enter = R.anim.slide_in_right
+                                        exit = R.anim.slide_out_left
+                                        popEnter = R.anim.slide_in_left
+                                        popExit = R.anim.slide_out_right
+                                    }
+                                },
+                            )
+                        }
                         NAV_DESTINATION_ON_BOARDING -> {
                             findNavController().navigate(
                                 route = OnBoarding,
@@ -67,9 +86,6 @@ class SplashFragment: Fragment() {
                                     }
                                 },
                             )
-                        }
-                        NAV_DESTINATION_SCHEDULE -> {
-                            // TODO: Navigate to Schedule
                         }
                     }
                 }

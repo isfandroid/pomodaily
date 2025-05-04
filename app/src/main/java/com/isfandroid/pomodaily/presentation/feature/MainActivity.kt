@@ -11,7 +11,9 @@ import androidx.navigation.fragment.fragment
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.ActivityMainBinding
 import com.isfandroid.pomodaily.presentation.feature.onboarding.OnBoardingContainerFragment
+import com.isfandroid.pomodaily.presentation.feature.pomodoro.PomodoroFragment
 import com.isfandroid.pomodaily.presentation.feature.splash.SplashFragment
+import com.isfandroid.pomodaily.presentation.feature.task.TasksFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 
@@ -26,12 +28,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        enableEdgeToEdge()
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//        enableEdgeToEdge()
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
 
         // Navigation Components
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -46,6 +48,12 @@ class MainActivity : AppCompatActivity() {
             fragment<OnBoardingContainerFragment, OnBoarding> {
                 label = getString(R.string.txt_on_boarding)
             }
+            fragment<TasksFragment, Tasks> {
+                label = getString(R.string.txt_tasks)
+            }
+            fragment<PomodoroFragment, Pomodoro> {
+                label = getString(R.string.txt_pomodoro)
+            }
         }
     }
 }
@@ -56,3 +64,9 @@ data object Splash
 
 @Serializable
 data object OnBoarding
+
+@Serializable
+data object Pomodoro
+
+@Serializable
+data object Tasks

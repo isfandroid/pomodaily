@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.isfandroid.pomodaily.data.source.repository.PrefsRepository
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_ON_BOARDING
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_SCHEDULE
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -12,27 +13,25 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class SplashViewModel @Inject constructor(
     private val prefsRepository: PrefsRepository
 ): ViewModel() {
 
-    private val _navigateToDestination = MutableSharedFlow<String>()
-    val navigateToDestination = _navigateToDestination.asSharedFlow()
+    private val _navDestination = MutableSharedFlow<String>()
+    val navDestination =_navDestination.asSharedFlow()
 
     init {
-        viewModelScope.launch {
-            delay(1000)
-            checkNavigationDestination()
-        }
+        checkNavDestination()
     }
 
-    private fun checkNavigationDestination() {
+    private fun checkNavDestination() {
         viewModelScope.launch {
-            val isOnboardingDone = prefsRepository.isOnBoardingDone.first()
-            if (isOnboardingDone) {
-                _navigateToDestination.emit(NAV_DESTINATION_SCHEDULE)
+            delay(1000)
+            if (prefsRepository.isOnBoardingDone.first()) {
+                _navDestination.emit(NAV_DESTINATION_SCHEDULE)
             } else {
-                _navigateToDestination.emit(NAV_DESTINATION_ON_BOARDING)
+                _navDestination.emit(NAV_DESTINATION_ON_BOARDING)
             }
         }
     }

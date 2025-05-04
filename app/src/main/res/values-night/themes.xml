@@ -21,5 +21,8 @@
         <!-- Error color -->
         <item name="colorError">@color/dark_error</item>
         <item name="colorOnError">@color/dark_on_error</item>
+
+        <!--COMPONENT - Chip-->
+        <item name="chipStyle">@style/BaseChip</item>
     </style>
 </resources>
