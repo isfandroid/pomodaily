@@ -3,7 +3,7 @@ package com.isfandroid.pomodaily.utils
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.R
+import com.isfandroid.pomodaily.R
 
 object Helper {
 
@@ -21,11 +21,11 @@ object Helper {
         val textColor: Int
 
         if (isError) {
-            backgroundColor = MaterialColors.getColor(view, R.attr.colorError)
+            backgroundColor = MaterialColors.getColor(view, com.google.android.material.R.attr.colorError)
             textColor = MaterialColors.getColor(view, R.attr.colorOnError)
         } else {
-            backgroundColor = MaterialColors.getColor(view, R.attr.colorPrimary)
-            textColor = MaterialColors.getColor(view, R.attr.colorOnPrimary)
+            backgroundColor = MaterialColors.getColor(view, R.attr.colorSuccess)
+            textColor = MaterialColors.getColor(view, R.attr.colorOnSuccess)
         }
 
         Snackbar.make(view, message, duration)

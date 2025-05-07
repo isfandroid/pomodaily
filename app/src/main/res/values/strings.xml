@@ -53,4 +53,6 @@
     <string name="txt_skip">Skip</string>
     <string name="txt_msg_delete_task_failed">Failed to delete task</string>
     <string name="txt_msg_delete_task_successful">Task deleted successfully.</string>
+    <string name="txt_value_task_sessions">%d / %d</string>
+    <string name="txt_no_active_task">No Active Task</string>
 </resources>

@@ -23,7 +23,29 @@ class TaskRepository @Inject constructor(
             val tasks = localDataSource.getTasksByDay(dayId).first().map { mapLocalTaskToDomain(it) }
             emit(Result.Success(tasks))
         } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "Unknown error occurred: Get Tasks"))
+            emit(Result.Error(e.message ?: "Unknown error occurred: Get Tasks by Day"))
+        }
+    }
+
+    fun getTask(taskId: Long): Flow<Result<Task>> = flow {
+        try {
+            val task = localDataSource.getTask(taskId).first().let { mapLocalTaskToDomain(it) }
+            emit(Result.Success(task))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error occurred: Get Task"))
+        }
+    }
+
+    fun getUncompletedTaskByDay(dayId: Int): Flow<Result<Task?>> = flow {
+        try {
+            val result = localDataSource.getUncompletedTaskByDay(dayId).first()
+            if (result == null) {
+                emit(Result.Success(null))
+            } else {
+                emit(Result.Success(mapLocalTaskToDomain(result)))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error occurred: Get Uncompleted Task by Day"))
         }
     }
 

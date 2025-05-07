@@ -3,4 +3,6 @@
     <!--CUSTOM COLOR NAMES-->
     <attr name="colorPrimaryOverlay" format="color" />
     <attr name="colorOnError" format="color" />
+    <attr name="colorSuccess" format="color" />
+    <attr name="colorOnSuccess" format="color" />
 </resources>

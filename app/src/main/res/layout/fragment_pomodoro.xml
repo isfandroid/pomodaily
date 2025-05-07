@@ -69,7 +69,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_timer"
-        app:layout_constraintBottom_toTopOf="@id/btn_start_pause_resume"
+        app:layout_constraintBottom_toTopOf="@id/btn_start"
         tools:text="Stay focused for 25 minutes"
         />
 
@@ -83,13 +83,14 @@
         android:visibility="invisible"
         app:icon="@drawable/ic_restart_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_start_pause_resume"
-        app:layout_constraintTop_toTopOf="@id/btn_start_pause_resume"
-        app:layout_constraintBottom_toBottomOf="@id/btn_start_pause_resume"
+        app:layout_constraintEnd_toStartOf="@id/btn_start"
+        app:layout_constraintTop_toTopOf="@id/btn_start"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start"
         app:layout_constraintHorizontal_chainStyle="packed"
         />
+
     <Button
-        android:id="@+id/btn_start_pause_resume"
+        android:id="@+id/btn_start"
         style="@style/Widget.Material3.Button.IconButton.Filled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -101,12 +102,47 @@
         app:icon="@drawable/ic_play_24"
         app:iconSize="32dp"
         app:layout_constraintStart_toEndOf="@id/btn_restart"
-        app:layout_constraintEnd_toStartOf="@id/btn_skip_stop"
+        app:layout_constraintEnd_toStartOf="@id/btn_skip"
         app:layout_constraintTop_toBottomOf="@id/tv_message"
         app:layout_constraintBottom_toTopOf="@id/card_active_task"
         />
     <Button
-        android:id="@+id/btn_skip_stop"
+        android:id="@+id/btn_pause"
+        style="@style/Widget.Material3.Button.IconButton.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:padding="16dp"
+        android:contentDescription="@string/txt_statistics"
+        android:visibility="gone"
+        app:icon="@drawable/ic_pause_24"
+        app:iconSize="32dp"
+        app:layout_constraintStart_toStartOf="@id/btn_start"
+        app:layout_constraintEnd_toEndOf="@id/btn_start"
+        app:layout_constraintTop_toTopOf="@id/btn_start"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start"
+        />
+    <Button
+        android:id="@+id/btn_resume"
+        style="@style/Widget.Material3.Button.IconButton.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:padding="16dp"
+        android:contentDescription="@string/txt_statistics"
+        android:visibility="gone"
+        app:icon="@drawable/ic_resume_24"
+        app:iconSize="32dp"
+        app:layout_constraintStart_toStartOf="@id/btn_start"
+        app:layout_constraintEnd_toEndOf="@id/btn_start"
+        app:layout_constraintTop_toTopOf="@id/btn_start"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start"
+        />
+
+    <Button
+        android:id="@+id/btn_skip"
         style="?attr/materialIconButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,64 +150,78 @@
         android:contentDescription="@string/txt_settings"
         android:visibility="invisible"
         app:icon="@drawable/ic_skip_forward_24"
-        app:layout_constraintStart_toEndOf="@id/btn_start_pause_resume"
+        app:layout_constraintStart_toEndOf="@id/btn_start"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btn_start_pause_resume"
-        app:layout_constraintBottom_toBottomOf="@id/btn_start_pause_resume"
+        app:layout_constraintTop_toTopOf="@id/btn_start"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start"
         />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_active_task"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:backgroundTint="?attr/backgroundColor"
-        android:visibility="gone"
         app:strokeColor="?attr/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tv_tasks_info"
+        app:layout_constraintBottom_toBottomOf="parent"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_active_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="12dp"
             >
             <TextView
-                android:id="@+id/tv_active_task_title"
-                style="@style/Text.SemiBold.16"
+                android:id="@+id/tv_active_task_name"
+                style="@style/Text.SemiBold.14"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:maxLines="1"
+                android:layout_marginEnd="12dp"
+                android:maxLines="3"
                 android:ellipsize="end"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tv_active_task_est_sessions"
-                tools:text="Learn Jetpack Compose"
+                app:layout_constraintEnd_toStartOf="@id/tv_active_task_sessions"
+                app:layout_constraintBottom_toTopOf="@id/tv_active_task_total_minutes"
+                tools:text="This is a sample of active task name"
                 />
             <TextView
-                android:id="@+id/tv_active_task_est_sessions"
-                style="@style/Text.SemiBold.16"
+                android:id="@+id/tv_active_task_sessions"
+                style="@style/Text.SemiBold.14"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_active_task_name"
+                app:layout_constraintBottom_toBottomOf="@id/tv_active_task_name"
+                tools:text="0 / 4"
+                />
+            <TextView
+                android:id="@+id/tv_active_task_total_minutes"
+                style="@style/Text.Regular.14"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@id/tv_active_task_name"
+                app:layout_constraintEnd_toEndOf="@id/tv_active_task_name"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="8 hours and 40 minutes"
+                />
+
+            <TextView
+                android:id="@+id/tv_no_active_task"
+                style="@style/Text.Regular.16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="?attr/colorPrimary"
+                android:text="@string/txt_no_active_task"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="0/4"
+                app:layout_constraintBottom_toBottomOf="parent"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
-
-    <TextView
-        android:id="@+id/tv_tasks_info"
-        style="@style/Text.Regular.16"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:text="No active task"
-        />
 </androidx.constraintlayout.widget.ConstraintLayout>

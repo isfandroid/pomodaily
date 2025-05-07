@@ -228,6 +228,7 @@ class TasksFragment: Fragment() {
 
     private fun createDaysChip(dayId: Int, dayName: String): Chip {
         val chip = Chip(context)
+        chip.id = dayId
         chip.setEnsureMinTouchTargetSize(false)
         chip.text = dayName
         chip.isCheckable = true

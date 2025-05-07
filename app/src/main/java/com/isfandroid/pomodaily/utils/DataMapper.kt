@@ -11,6 +11,7 @@ object DataMapper {
         order = input.order,
         name = input.name,
         pomodoroSessions = input.pomodoroSessions,
+        completedSessions = input.completedSessions,
         note = input.note
     )
 
@@ -20,6 +21,7 @@ object DataMapper {
         order = input.order ?: 0,
         name = input.name.orEmpty(),
         pomodoroSessions = input.pomodoroSessions,
+        completedSessions = input.completedSessions,
         note = input.note
     )
 }

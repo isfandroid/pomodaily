@@ -13,6 +13,8 @@
     <color name="light_on_surface">#4F4F4F</color> <!--subdued text: notes, timestamps-->
     <color name="light_error">#D32F2F</color> <!--alerts/conflicts-->
     <color name="light_on_error">#FFFFFF</color>
+    <color name="light_success">#388E3C</color>
+    <color name="light_on_success">#FFFFFF</color>
 
     <!--DARK THEME-->
     <color name="dark_primary">#82B1FF</color> <!--focus & cta buttons-->
@@ -27,6 +29,8 @@
     <color name="dark_on_surface">#BDBDBD</color> <!--subdued text: notes, timestamps-->
     <color name="dark_error">#CF6679</color>
     <color name="dark_on_error">#000000</color>
+    <color name="dark_success">#81C784</color>
+    <color name="dark_on_success">#000000</color>
 
     <!--GENERAL-->
     <color name="black">#000000</color>

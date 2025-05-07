@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isfandroid.pomodaily.data.source.repository.PrefsRepository
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_ON_BOARDING
-import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_SCHEDULE
+import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_POMODORO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +29,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             delay(1000)
             if (prefsRepository.isOnBoardingDone.first()) {
-                _navDestination.emit(NAV_DESTINATION_SCHEDULE)
+                _navDestination.emit(NAV_DESTINATION_POMODORO)
             } else {
                 _navDestination.emit(NAV_DESTINATION_ON_BOARDING)
             }

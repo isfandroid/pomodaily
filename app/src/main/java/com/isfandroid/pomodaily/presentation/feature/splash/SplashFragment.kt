@@ -14,13 +14,12 @@ import androidx.navigation.navOptions
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentSplashBinding
 import com.isfandroid.pomodaily.presentation.feature.OnBoarding
-import com.isfandroid.pomodaily.presentation.feature.Tasks
+import com.isfandroid.pomodaily.presentation.feature.Pomodoro
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_ON_BOARDING
-import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_SCHEDULE
+import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_POMODORO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashFragment: Fragment() {
@@ -54,10 +53,9 @@ class SplashFragment: Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.navDestination.collectLatest {
                     when (it) {
-                        NAV_DESTINATION_SCHEDULE -> {
-                            // TODO: Navigate to Schedule
+                        NAV_DESTINATION_POMODORO -> {
                             findNavController().navigate(
-                                route = Tasks,
+                                route = Pomodoro,
                                 navOptions = navOptions {
                                     popUpTo(0) {
                                         inclusive = true

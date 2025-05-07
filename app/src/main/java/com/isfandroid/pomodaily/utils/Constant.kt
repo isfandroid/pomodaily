@@ -1,39 +1,54 @@
 package com.isfandroid.pomodaily.utils
 
+import java.util.Calendar
+
 object Constant {
     // DATA - LOCAL - PREFS
     const val APP_PREFS = "APP_PREFS"
     const val PREFS_KEY_IS_ON_BOARDING_DONE = "PREFS_KEY_IS_ON_BOARDING_DONE"
+    const val PREFS_KEY_POMODORO_COUNT = "PREFS_KEY_POMODORO_COUNT"
     const val PREFS_KEY_POMODORO_DURATION = "PREFS_KEY_POMODORO_DURATION"
     const val PREFS_KEY_BREAK_DURATION = "PREFS_KEY_BREAK_DURATION"
     const val PREFS_KEY_LONG_BREAK_DURATION = "PREFS_KEY_LONG_BREAK_DURATION"
+    const val PREFS_KEY_LONG_BREAK_INTERVAL = "PREFS_KEY_LONG_BREAK_INTERVAL"
+    const val PREFS_KEY_SETTINGS_AUTO_START_BREAKS = "PREFS_KEY_SETTINGS_AUTO_START_BREAKS"
+    const val PREFS_KEY_SETTINGS_AUTO_START_POMODOROS = "PREFS_KEY_SETTINGS_AUTO_START_POMODOROS"
+    const val PREFS_KEY_ACTIVE_TASK_ID = "PREFS_KEY_ACTIVE_TASK_ID"
+
+    // DATA - LOCAL - PREFS - DEFAULT VALUE
+    const val DEFAULT_POMODORO_MINUTES = 25
+    const val DEFAULT_BREAK_MINUTES = 5
+    const val DEFAULT_LONG_BREAK_MINUTES = 10
+    const val DEFAULT_LONG_BREAK_INTERVAL = 4
 
     // DATA - LOCAL - DATABASE
     const val DB_NAME = "pomodaily.db"
 
-    // DATA - DAY ID
-    const val DAY_ID_MONDAY = 1
-    const val DAY_ID_TUESDAY = 2
-    const val DAY_ID_WEDNESDAY = 3
-    const val DAY_ID_THURSDAY = 4
-    const val DAY_ID_FRIDAY = 5
-    const val DAY_ID_SATURDAY = 6
-    const val DAY_ID_SUNDAY = 7
-
     // DATA - DAYS
     val DAYS_OF_WEEK = listOf(
-        mapOf("id" to DAY_ID_MONDAY, "name" to "Monday"),
-        mapOf("id" to DAY_ID_TUESDAY, "name" to "Tuesday"),
-        mapOf("id" to DAY_ID_WEDNESDAY, "name" to "Wednesday"),
-        mapOf("id" to DAY_ID_THURSDAY, "name" to "Thursday"),
-        mapOf("id" to DAY_ID_FRIDAY, "name" to "Friday"),
-        mapOf("id" to DAY_ID_SATURDAY, "name" to "Saturday"),
-        mapOf("id" to DAY_ID_SUNDAY, "name" to "Sunday")
+        mapOf("id" to Calendar.SUNDAY, "name" to "Sunday"),
+        mapOf("id" to Calendar.MONDAY, "name" to "Monday"),
+        mapOf("id" to Calendar.TUESDAY, "name" to "Tuesday"),
+        mapOf("id" to Calendar.WEDNESDAY, "name" to "Wednesday"),
+        mapOf("id" to Calendar.THURSDAY, "name" to "Thursday"),
+        mapOf("id" to Calendar.FRIDAY, "name" to "Friday"),
+        mapOf("id" to Calendar.SATURDAY, "name" to "Saturday"),
     )
 
     // NAVIGATION
     const val NAV_DESTINATION_ON_BOARDING = "NAV_DESTINATION_ON_BOARDING"
-    const val NAV_DESTINATION_SCHEDULE = "NAV_DESTINATION_SCHEDULE"
-    const val NAV_DESTINATION_TASKS = "NAV_DESTINATION_TASKS"
     const val NAV_DESTINATION_POMODORO = "NAV_DESTINATION_POMODORO"
+
+    // TIMER STATE
+    const val TIMER_STATE_IDLE = "TIMER_STATE_IDLE"
+    const val TIMER_STATE_RUNNING = "TIMER_STATE_RUNNING"
+    const val TIMER_STATE_PAUSED = "TIMER_STATE_PAUSED"
+
+    // TIMER TYPE
+    const val TIMER_TYPE_POMODORO = "TIMER_TYPE_POMODORO"
+    const val TIMER_TYPE_BREAK = "TIMER_TYPE_BREAK"
+    const val TIMER_TYPE_LONG_BREAK = "TIMER_TYPE_LONG_BREAK"
+
+    // OTHERS
+    const val STATE_IN_TIMEOUT_MS = 5000L
 }

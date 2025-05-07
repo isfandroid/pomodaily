@@ -11,5 +11,6 @@ data class TaskEntity(
     val order: Int,
     val name: String,
     val pomodoroSessions: Int,
+    val completedSessions: Int = 0,
     val note: String? = null,
 )

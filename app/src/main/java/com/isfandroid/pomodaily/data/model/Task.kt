@@ -6,5 +6,6 @@ data class Task(
     val order: Int?,
     val name: String?,
     val pomodoroSessions: Int = 1,
+    val completedSessions: Int = 0,
     val note: String? = null
 )

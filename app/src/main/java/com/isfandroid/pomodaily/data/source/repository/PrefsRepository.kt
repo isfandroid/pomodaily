@@ -14,6 +14,11 @@ class PrefsRepository @Inject constructor(
         localDataSource.setIsOnBoardingDone(value)
     }
 
+    val pomodoroCount = localDataSource.pomodoroCount
+    suspend fun setPomodoroCount(value: Int) {
+        localDataSource.setPomodoroCount(value)
+    }
+
     val pomodoroDuration = localDataSource.pomodoroDuration
     suspend fun setPomodoroDuration(value: Int) {
         localDataSource.setPomodoroDuration(value)
@@ -24,8 +29,28 @@ class PrefsRepository @Inject constructor(
         localDataSource.setBreakDuration(value)
     }
 
-    val setLongBreakDuration = localDataSource.longBreakDuration
+    val longBreakDuration = localDataSource.longBreakDuration
     suspend fun setLongBreakDuration(value: Int) {
         localDataSource.setLongBreakDuration(value)
+    }
+
+    val longBreakInterval = localDataSource.longBreakInterval
+    suspend fun setLongBreakInterval(value: Int) {
+        localDataSource.setLongBreakInterval(value)
+    }
+
+    val autoStartBreaks = localDataSource.autoStartBreaks
+    suspend fun setAutoStartBreaks(value: Boolean) {
+        localDataSource.setAutoStartBreaks(value)
+    }
+
+    val autoStartPomodoros = localDataSource.autoStartPomodoros
+    suspend fun setAutoStartPomodoros(value: Boolean) {
+        localDataSource.setAutoStartPomodoros(value)
+    }
+
+    val activeTaskId = localDataSource.activeTaskId
+    suspend fun setActiveTaskId(value: Long) {
+        localDataSource.setActiveTaskId(value)
     }
 }

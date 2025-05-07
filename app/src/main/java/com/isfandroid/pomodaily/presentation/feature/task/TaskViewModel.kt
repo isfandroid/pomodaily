@@ -7,7 +7,6 @@ import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.ExpandableTaskUiModel
 import com.isfandroid.pomodaily.presentation.resource.UiState
-import com.isfandroid.pomodaily.utils.Constant.DAY_ID_MONDAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +31,7 @@ class TaskViewModel @Inject constructor(
     private val _deleteTaskResult = MutableSharedFlow<UiState<Unit>>()
     val deleteTaskResult = _deleteTaskResult.asSharedFlow()
 
-    private val _selectedDayId = MutableStateFlow(DAY_ID_MONDAY)
+    private val _selectedDayId = MutableStateFlow(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))
     val selectedDayId = _selectedDayId.asStateFlow()
 
     private val _tasks = MutableStateFlow<List<ExpandableTaskUiModel>?>(null)

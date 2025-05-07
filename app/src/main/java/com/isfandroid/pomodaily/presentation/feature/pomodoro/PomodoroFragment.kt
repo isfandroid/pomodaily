@@ -5,18 +5,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentPomodoroBinding
 import com.isfandroid.pomodaily.presentation.feature.Tasks
+import com.isfandroid.pomodaily.presentation.resource.UiState
+import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
+import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_PAUSED
+import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_RUNNING
+import com.isfandroid.pomodaily.utils.Constant.TIMER_TYPE_BREAK
+import com.isfandroid.pomodaily.utils.Constant.TIMER_TYPE_POMODORO
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PomodoroFragment: Fragment() {
 
     private var _binding: FragmentPomodoroBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel by viewModels<PomodoroViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +44,7 @@ class PomodoroFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        observeData()
     }
 
     override fun onDestroyView() {
@@ -58,6 +73,105 @@ class PomodoroFragment: Fragment() {
             }
             btnSettings.setOnClickListener {
                 // TODO: Navigate to Settings
+            }
+
+            // Timer Action
+            btnRestart.setOnClickListener { viewModel.restartTimer() }
+            btnStart.setOnClickListener { viewModel.startTimer() }
+            btnPause.setOnClickListener { viewModel.pauseTimer() }
+            btnResume.setOnClickListener { viewModel.resumeTimer() }
+            btnSkip.setOnClickListener { viewModel.skipForward() }
+
+            // Active Task
+            cardActiveTask.setOnClickListener {
+                // TODO: Navigate to Schedule
+            }
+        }
+    }
+
+    private fun observeData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.timerState.collectLatest {
+                        with(binding) {
+                            when (it) {
+                                TIMER_STATE_IDLE -> {
+                                    btnRestart.visibility = View.INVISIBLE
+                                    btnSkip.visibility = View.INVISIBLE
+                                    btnStart.visibility = View.VISIBLE
+                                    btnPause.visibility = View.GONE
+                                    btnResume.visibility = View.GONE
+                                }
+                                TIMER_STATE_RUNNING -> {
+                                    btnRestart.visibility = View.VISIBLE
+                                    btnSkip.visibility = View.VISIBLE
+                                    btnStart.visibility = View.INVISIBLE
+                                    btnPause.visibility = View.VISIBLE
+                                    btnResume.visibility = View.GONE
+                                }
+                                TIMER_STATE_PAUSED -> {
+                                    btnRestart.visibility = View.VISIBLE
+                                    btnSkip.visibility = View.VISIBLE
+                                    btnStart.visibility = View.INVISIBLE
+                                    btnPause.visibility = View.GONE
+                                    btnResume.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.timerType.collectLatest {
+                        val message = when (it) {
+                            TIMER_TYPE_POMODORO -> "Stay focused for 25 minutes"
+                            TIMER_TYPE_BREAK -> "Take a break for 5 minutes"
+                            else -> "Take a long break for 15 minutes"
+                        }
+                        binding.tvMessage.text = message
+                    }
+                }
+
+                launch {
+                    viewModel.remainingTimeSeconds.collectLatest {
+                        val minutes = it / 60
+                        val seconds = it % 60
+                        binding.tvTimer.text = "%02d:%02d".format(minutes, seconds)
+                    }
+                }
+
+                launch {
+                    viewModel.activeTask.collectLatest {
+                        with(binding) {
+                            when(it) {
+                                is UiState.Loading -> {
+                                }
+                                is UiState.Error -> {
+                                }
+                                is UiState.Success -> {
+                                    tvNoActiveTask.visibility = View.GONE
+                                    tvActiveTaskName.visibility = View.VISIBLE
+                                    tvActiveTaskSessions.visibility = View.VISIBLE
+                                    tvActiveTaskTotalMinutes.visibility = View.VISIBLE
+
+                                    tvActiveTaskName.text = it.data?.name
+                                    tvActiveTaskSessions.text = getString(
+                                        R.string.txt_value_task_sessions,
+                                        it.data?.completedSessions,
+                                        it.data?.pomodoroSessions
+                                    )
+                                }
+                                null -> {
+                                    tvNoActiveTask.visibility = View.VISIBLE
+                                    tvActiveTaskName.visibility = View.GONE
+                                    tvActiveTaskSessions.visibility = View.GONE
+                                    tvActiveTaskTotalMinutes.visibility = View.GONE
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

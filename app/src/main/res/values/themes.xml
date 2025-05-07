@@ -22,6 +22,10 @@
         <item name="colorError">@color/light_error</item>
         <item name="colorOnError">@color/light_on_error</item>
 
+        <!-- Success color -->
+        <item name="colorSuccess">@color/light_success</item>
+        <item name="colorOnSuccess">@color/light_on_success</item>
+
         <!--COMPONENT - Chip-->
         <item name="chipStyle">@style/BaseChip</item>
     </style>
