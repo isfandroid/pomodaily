@@ -9,15 +9,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.isfandroid.pomodaily.R
-import com.isfandroid.pomodaily.data.model.Task
 import com.isfandroid.pomodaily.databinding.ItemTaskEditableBinding
 import com.isfandroid.pomodaily.presentation.model.ExpandableTaskUiModel
 
 class TaskRecyclerAdapter(
     private val onItemClick: (ExpandableTaskUiModel) -> Unit,
-    private val onDeleteClick: (Task) -> Unit,
+    private val onDeleteClick: (ExpandableTaskUiModel) -> Unit,
     private val onCancelClick: (ExpandableTaskUiModel) -> Unit,
-    private val onSaveClick: (Task) -> Unit,
+    private val onSaveClick: (ExpandableTaskUiModel) -> Unit,
 ): ListAdapter<ExpandableTaskUiModel, TaskRecyclerAdapter.TaskViewHolder>(COMPARATOR) {
 
     private var itemPomodoroSessions: Int = 1
@@ -29,7 +28,7 @@ class TaskRecyclerAdapter(
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val data = getItem(position)
-        itemPomodoroSessions = data.task.pomodoroSessions
+        itemPomodoroSessions = data.pomodoroSessions ?: 0
         holder.bind(data)
 
     }
@@ -45,17 +44,17 @@ class TaskRecyclerAdapter(
                 btnDecrement.isVisible = data.isExpanded
                 tvFormTitleTaskNotes.isVisible = data.isExpanded
                 tilTaskNotes.isVisible = data.isExpanded
-                btnDelete.isVisible = data.isExpanded && data.task.id != null
+                btnDelete.isVisible = data.isExpanded && !data.isNewEntry
                 btnCancel.isVisible = data.isExpanded
                 btnSave.isVisible = data.isExpanded
 
                 tvTaskName.isVisible = !data.isExpanded
                 tvTaskPomodoroSessions.isVisible = !data.isExpanded
-                tvTaskNotes.isVisible = !data.isExpanded && !data.task.note.isNullOrEmpty()
+                tvTaskNotes.isVisible = !data.isExpanded && !data.note.isNullOrEmpty()
 
                 if (data.isExpanded) {
-                    etTaskName.setText(data.task.name)
-                    etTaskPomodoroSessions.setText(data.task.pomodoroSessions.toString())
+                    etTaskName.setText(data.name)
+                    etTaskPomodoroSessions.setText(data.pomodoroSessions.toString())
                     etTaskPomodoroSessions.doOnTextChanged { _, _, _, _ ->
                         if (etTaskPomodoroSessions.text.toString().isNotEmpty()) {
                             itemPomodoroSessions = etTaskPomodoroSessions.text.toString().toInt()
@@ -64,11 +63,11 @@ class TaskRecyclerAdapter(
                             itemPomodoroSessions = 0
                         }
                     }
-                    etTaskNotes.setText(data.task.note.orEmpty())
+                    etTaskNotes.setText(data.note.orEmpty())
                 } else {
-                    tvTaskName.text = data.task.name
-                    tvTaskPomodoroSessions.text = itemView.context.getString(R.string.txt_value_pomodoro_sessions, data.task.pomodoroSessions)
-                    tvTaskNotes.text = data.task.note.orEmpty()
+                    tvTaskName.text = data.name
+                    tvTaskPomodoroSessions.text = itemView.context.getString(R.string.txt_value_pomodoro_sessions, data.pomodoroSessions)
+                    tvTaskNotes.text = data.note.orEmpty()
                 }
 
                 tvTaskNotes.setOnClickListener {
@@ -97,7 +96,7 @@ class TaskRecyclerAdapter(
                 }
                 btnDelete.setOnClickListener {
                     clearFormsFocus()
-                    onDeleteClick.invoke(data.task)
+                    onDeleteClick.invoke(data)
                 }
                 btnCancel.setOnClickListener {
                     clearFormsFocus()
@@ -114,7 +113,7 @@ class TaskRecyclerAdapter(
                         nameEntry.isEmpty() -> tilTaskName.error = itemView.context.getString(R.string.txt_msg_field_required)
                         pomodoroSessionsEntry.isEmpty() -> tilTaskPomodoroSessions.error = itemView.context.getString(R.string.txt_msg_field_required)
                         else -> {
-                            val updatedTask = data.task.copy(
+                            val updatedTask = data.copy(
                                 name = nameEntry,
                                 pomodoroSessions = pomodoroSessionsEntry.toInt(),
                                 note = notesEntry.ifEmpty { null }
@@ -144,7 +143,7 @@ class TaskRecyclerAdapter(
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<ExpandableTaskUiModel>() {
             override fun areItemsTheSame(oldItem: ExpandableTaskUiModel, newItem: ExpandableTaskUiModel): Boolean {
-                return oldItem.task.id == newItem.task.id
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: ExpandableTaskUiModel, newItem: ExpandableTaskUiModel): Boolean {

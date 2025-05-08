@@ -34,6 +34,7 @@ object Constant {
         mapOf("id" to Calendar.FRIDAY, "name" to "Friday"),
         mapOf("id" to Calendar.SATURDAY, "name" to "Saturday"),
     )
+    val CURRENT_DAY = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
 
     // NAVIGATION
     const val NAV_DESTINATION_ON_BOARDING = "NAV_DESTINATION_ON_BOARDING"

@@ -34,18 +34,30 @@ class TasksFragment: Fragment() {
 
     private val taskAdapter by lazy {
         TaskRecyclerAdapter(
-            onItemClick = { task ->
+            onItemClick = {
                 viewModel.deleteNewTaskEntry()
-                if (!task.isExpanded) viewModel.setExpandedTask(task.task.id)
+                if (it.isExpanded) {
+                    viewModel.setExpandedTaskId(null)
+                } else {
+                    viewModel.setExpandedTaskId(it.id)
+                }
             },
-            onDeleteClick = { task ->
-                viewModel.deleteTask(task)
+            onDeleteClick = {
+                if (it.isNewEntry) {
+                    viewModel.deleteNewTaskEntry()
+                } else {
+                    viewModel.deleteTask(it)
+                }
+                viewModel.setExpandedTaskId(null)
             },
-            onCancelClick = { _ ->
+            onCancelClick = {
                 viewModel.deleteNewTaskEntry()
+                viewModel.setExpandedTaskId(null)
             },
-            onSaveClick = { task ->
-                viewModel.updateTask(task)
+            onSaveClick = {
+                viewModel.deleteNewTaskEntry()
+                viewModel.updateTask(it)
+                viewModel.setExpandedTaskId(null)
             }
         )
     }
@@ -116,36 +128,6 @@ class TasksFragment: Fragment() {
                 launch {
                     viewModel.tasks.collectLatest {
                         with(binding) {
-                            if (it != null) {
-                                if (it.isEmpty()) {
-                                    rvItems.isVisible = false
-                                    layoutError.root.isVisible = true
-                                    btnAdd.isVisible = false
-
-                                    layoutError.tvTitle.text = getString(R.string.txt_empty_data)
-                                    layoutError.tvDesc.text = getString(R.string.txt_msg_no_tasks_for_this_day)
-                                    layoutError.btnAction.text = getString(R.string.txt_add_task)
-                                    layoutError.btnAction.setOnClickListener {
-                                        viewModel.addNewTaskEntry()
-                                    }
-                                }
-                                else {
-                                    rvItems.isVisible = true
-                                    layoutError.root.isVisible = false
-                                    btnAdd.isVisible = !it.any { task ->
-                                        task.task.id == null
-                                    }
-
-                                    taskAdapter.submitList(it)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.getTasksResult.collectLatest {
-                        with(binding) {
                             when(it) {
                                 is UiState.Loading -> {
                                     // TODO: showTaskLoading(true)
@@ -154,17 +136,36 @@ class TasksFragment: Fragment() {
                                     // TODO: showTaskLoading(false)
                                     rvItems.isVisible = false
                                     layoutError.root.isVisible = true
-                                    btnAdd.isVisible = false
+                                    btnAdd.visibility = View.GONE
 
                                     layoutError.tvTitle.text = getString(R.string.txt_msg_title_load_tasks_failed)
                                     layoutError.tvDesc.text = getString(R.string.txt_msg_desc_load_tasks_failed)
                                     layoutError.btnAction.text = getString(R.string.txt_retry)
                                     layoutError.btnAction.setOnClickListener {
-                                        viewModel.getTasks()
+                                        viewModel.refreshTasks()
                                     }
                                 }
                                 is UiState.Success -> {
                                     // TODO: showTaskLoading(false)
+                                    if (it.data.isNullOrEmpty()) {
+                                        rvItems.isVisible = false
+                                        layoutError.root.isVisible = true
+                                        btnAdd.visibility = View.GONE
+
+                                        layoutError.tvTitle.text = getString(R.string.txt_empty_data)
+                                        layoutError.tvDesc.text = getString(R.string.txt_msg_no_tasks_for_this_day)
+                                        layoutError.btnAction.text = getString(R.string.txt_add_task)
+                                        layoutError.btnAction.setOnClickListener {
+                                            viewModel.addNewTaskEntry()
+                                        }
+                                    }
+                                    else {
+                                        rvItems.isVisible = true
+                                        layoutError.root.isVisible = false
+                                        btnAdd.isVisible = !it.data.any { it.isNewEntry }
+
+                                        taskAdapter.submitList(it.data)
+                                    }
                                 }
                             }
                         }

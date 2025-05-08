@@ -1,8 +1,13 @@
 package com.isfandroid.pomodaily.presentation.model
 
-import com.isfandroid.pomodaily.data.model.Task
-
 data class ExpandableTaskUiModel(
-    val task: Task,
-    var isExpanded: Boolean = false
+    val id: Int?,
+    val dayOfWeek: Int?,
+    val order: Int?,
+    val name: String?,
+    val completedSessions: Int?,
+    val pomodoroSessions: Int?,
+    val note: String? = null,
+    var isExpanded: Boolean = false,
+    var isNewEntry: Boolean = false
 )
