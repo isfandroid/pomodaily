@@ -3,6 +3,7 @@ package com.isfandroid.pomodaily.data.source.repository
 import com.isfandroid.pomodaily.data.model.Task
 import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.local.LocalDataSource
+import com.isfandroid.pomodaily.utils.Constant.CURRENT_DAY
 import com.isfandroid.pomodaily.utils.DataMapper.mapDomainTaskToLocal
 import com.isfandroid.pomodaily.utils.DataMapper.mapLocalTaskToDomain
 import kotlinx.coroutines.Dispatchers
@@ -20,54 +21,52 @@ class TaskRepository @Inject constructor(
     private val localDataSource: LocalDataSource
 ) {
 
-    fun getTasksByDay(dayId:Int): Flow<Result<List<Task>>> = localDataSource.getTasksByDay(dayId)
-        .map {
-            val tasks = it.map { mapLocalTaskToDomain(it) }
+    fun getTasksByDay(dayId: Int): Flow<Result<List<Task>>> = localDataSource.getTasksByDay(dayId)
+        .map { localTasks ->
+            val tasks = localTasks.map { mapLocalTaskToDomain(it) }
             Result.Success(tasks) as Result<List<Task>>
         }
         .catch { e ->
-            emit(Result.Error(e.message ?: "Unknown error occurred: Get Tasks by Day"))
+            emit(Result.Error(e.message ?: "Unknown error occurred: Get Tasks by Day Id $dayId"))
         }
 
-    fun getTask(taskId: Long): Flow<Result<Task>> = flow {
-        try {
-            val task = localDataSource.getTask(taskId).first().let { mapLocalTaskToDomain(it) }
-            emit(Result.Success(task))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "Unknown error occurred: Get Task"))
-        }
-    }
-
-    fun getUncompletedTaskByDay(dayId: Int): Flow<Result<Task?>> = flow {
-        try {
-            val result = localDataSource.getUncompletedTaskByDay(dayId).first()
-            if (result == null) {
-                emit(Result.Success(null))
+    fun getActiveTask(): Flow<Result<Task?>> = localDataSource.getActiveTask()
+        .map {
+            if (it == null) {
+                Result.Success(null)
             } else {
-                emit(Result.Success(mapLocalTaskToDomain(result)))
+                val task = mapLocalTaskToDomain(it)
+                Result.Success(task) as Result<Task>
             }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "Unknown error occurred: Get Uncompleted Task by Day"))
+        }.catch { e ->
+            emit(Result.Error(e.message ?: "Unknown error occurred: Get Active Task"))
         }
-    }
+
+    fun getUncompletedTaskByDay(dayId: Int) = localDataSource.getUncompletedTaskByDay(dayId)
+        .map {
+            if (it == null) {
+                Result.Success(null)
+            } else {
+                val task = mapLocalTaskToDomain(it)
+                Result.Success(task) as Result<Task>
+            }
+        }.catch { e ->
+            emit(Result.Error(e.message ?: "Unknown error occurred: Get Uncompleted Task by Day Id $dayId"))
+        }
 
     fun upsertTask(task: Task): Flow<Result<Unit>> = flow {
         try {
             val localTask = mapDomainTaskToLocal(task)
             localDataSource.upsertTask(localTask)
-            emit(Result.Success(Unit))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "Unknown error occurred: Add or Update Task"))
-        }
-    }.flowOn(Dispatchers.IO)
 
-    fun upsertTasks(tasks: List<Task>): Flow<Result<Unit>> = flow {
-        try {
-            val localTasks = tasks.map { mapDomainTaskToLocal(it) }
-            localDataSource.upsertTasks(localTasks)
+            if (task.id == 0 && localDataSource.activeTaskId.first() == 0L) {
+                val uncompletedTask = localDataSource.getUncompletedTaskByDay(CURRENT_DAY).first()
+                localDataSource.setActiveTaskId(uncompletedTask?.id ?: 0L)
+            }
+
             emit(Result.Success(Unit))
         } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "Unknown error occurred: Add or Update Tasks"))
+            emit(Result.Error(e.message ?: "Unknown error occurred: Add or Update Task $task"))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -75,9 +74,24 @@ class TaskRepository @Inject constructor(
         try {
             val localTask = mapDomainTaskToLocal(task)
             localDataSource.deleteTask(localTask)
+
+            if (localDataSource.activeTaskId.first() == task.id?.toLong()) {
+                val uncompletedTask = localDataSource.getUncompletedTaskByDay(CURRENT_DAY).first()
+                localDataSource.setActiveTaskId(uncompletedTask?.id ?: 0L)
+            }
+
             emit(Result.Success(Unit))
         } catch (e: Exception) {
-            emit(Result.Error(e.message ?: "Unknown error occurred: Delete Task"))
+            emit(Result.Error(e.message ?: "Unknown error occurred: Delete Task $task"))
+        }
+    }.flowOn(Dispatchers.IO)
+
+    fun resetTasksCompletedSessionsForDay(dayId: Int): Flow<Result<Unit>> = flow {
+        try {
+            localDataSource.resetTaskCompletedSessionsForDay(dayId)
+            emit(Result.Success(Unit))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error occurred: Reset Tasks Completed Sessions for Day Id $dayId"))
         }
     }.flowOn(Dispatchers.IO)
 }

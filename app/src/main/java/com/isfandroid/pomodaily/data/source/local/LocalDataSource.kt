@@ -8,24 +8,33 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import com.isfandroid.pomodaily.data.source.local.database.AppDao
 import com.isfandroid.pomodaily.data.source.local.model.TaskEntity
+import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_BREAKS
+import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_POMODOROS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_BREAK_MINUTES
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_LONG_BREAK_INTERVAL
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_LONG_BREAK_MINUTES
+import com.isfandroid.pomodaily.utils.Constant.DEFAULT_POMODORO_COUNT
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_POMODORO_MINUTES
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_ACTIVE_TASK_ID
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_BREAK_DURATION
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_IS_ON_BOARDING_DONE
+import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_LAST_RESET_DATE
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_LONG_BREAK_DURATION
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_LONG_BREAK_INTERVAL
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_POMODORO_COUNT
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_POMODORO_DURATION
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_SETTINGS_AUTO_START_BREAKS
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_SETTINGS_AUTO_START_POMODOROS
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class LocalDataSource @Inject constructor(
     private val dataStore: DataStore<Preferences>,
@@ -34,8 +43,10 @@ class LocalDataSource @Inject constructor(
 
     /** region APP PREFS - OnBoarding **/
     suspend fun setIsOnBoardingDone(value: Boolean) {
-        dataStore.edit { prefs ->
-            prefs[booleanPreferencesKey(PREFS_KEY_IS_ON_BOARDING_DONE)] = value
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[booleanPreferencesKey(PREFS_KEY_IS_ON_BOARDING_DONE)] = value
+            }
         }
     }
     val isOnBoardingDone: Flow<Boolean> = dataStore.data.map { prefs ->
@@ -45,17 +56,21 @@ class LocalDataSource @Inject constructor(
 
     /** region APP PREFS - Pomodoro **/
     suspend fun setPomodoroCount(value: Int) {
-        dataStore.edit { prefs ->
-            prefs[intPreferencesKey(PREFS_KEY_POMODORO_COUNT)] = value
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[intPreferencesKey(PREFS_KEY_POMODORO_COUNT)] = value
+            }
         }
     }
     val pomodoroCount: Flow<Int> = dataStore.data.map { prefs ->
-        prefs[intPreferencesKey(PREFS_KEY_POMODORO_COUNT)] ?: 0
+        prefs[intPreferencesKey(PREFS_KEY_POMODORO_COUNT)] ?: DEFAULT_POMODORO_COUNT
     }
 
     suspend fun setPomodoroDuration(minutes: Int) {
-        dataStore.edit { prefs ->
-            prefs[intPreferencesKey(PREFS_KEY_POMODORO_DURATION)] = minutes
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[intPreferencesKey(PREFS_KEY_POMODORO_DURATION)] = minutes
+            }
         }
     }
     val pomodoroDuration: Flow<Int> = dataStore.data.map { prefs ->
@@ -63,8 +78,10 @@ class LocalDataSource @Inject constructor(
     }
 
     suspend fun setBreakDuration(minutes: Int) {
-        dataStore.edit { prefs ->
-            prefs[intPreferencesKey(PREFS_KEY_BREAK_DURATION)] = minutes
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[intPreferencesKey(PREFS_KEY_BREAK_DURATION)] = minutes
+            }
         }
     }
     val breakDuration: Flow<Int> = dataStore.data.map { prefs ->
@@ -72,8 +89,10 @@ class LocalDataSource @Inject constructor(
     }
 
     suspend fun setLongBreakDuration(minutes: Int) {
-        dataStore.edit { prefs ->
-            prefs[intPreferencesKey(PREFS_KEY_LONG_BREAK_DURATION)] = minutes
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[intPreferencesKey(PREFS_KEY_LONG_BREAK_DURATION)] = minutes
+            }
         }
     }
     val longBreakDuration: Flow<Int> = dataStore.data.map { prefs ->
@@ -81,8 +100,10 @@ class LocalDataSource @Inject constructor(
     }
 
     suspend fun setLongBreakInterval(value: Int) {
-        dataStore.edit { prefs ->
-            prefs[intPreferencesKey(PREFS_KEY_LONG_BREAK_INTERVAL)] = value
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[intPreferencesKey(PREFS_KEY_LONG_BREAK_INTERVAL)] = value
+            }
         }
     }
     val longBreakInterval: Flow<Int> = dataStore.data.map { prefs ->
@@ -92,28 +113,45 @@ class LocalDataSource @Inject constructor(
 
     /** region APP PREFS - Settings **/
     suspend fun setAutoStartBreaks(value: Boolean) {
-        dataStore.edit { prefs ->
-            prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_BREAKS)] = value
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_BREAKS)] = value
+            }
         }
     }
     val autoStartBreaks: Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_BREAKS)] ?: true
+        prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_BREAKS)] ?: DEFAULT_AUTO_START_BREAKS
     }
 
     suspend fun setAutoStartPomodoros(value: Boolean) {
-        dataStore.edit { prefs ->
-            prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_POMODOROS)] = value
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_POMODOROS)] = value
+            }
         }
     }
     val autoStartPomodoros: Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_POMODOROS)] ?: true
+        prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_POMODOROS)] ?: DEFAULT_AUTO_START_POMODOROS
+    }
+
+    suspend fun setLastResetDate(value: Long) {
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[longPreferencesKey(PREFS_KEY_LAST_RESET_DATE)] = value
+            }
+        }
+    }
+    val lastResetDate: Flow<Long> = dataStore.data.map { prefs ->
+        prefs[longPreferencesKey(PREFS_KEY_LAST_RESET_DATE)] ?: 0L
     }
     /** endregion APP PREFS - Settings **/
 
     /** region APP PREFS - Task **/
     suspend fun setActiveTaskId(value: Long) {
-        dataStore.edit { prefs ->
-            prefs[longPreferencesKey(PREFS_KEY_ACTIVE_TASK_ID)] = value
+        withContext(Dispatchers.IO) {
+            dataStore.edit { prefs ->
+                prefs[longPreferencesKey(PREFS_KEY_ACTIVE_TASK_ID)] = value
+            }
         }
     }
     val activeTaskId: Flow<Long> = dataStore.data.map { prefs ->
@@ -123,9 +161,9 @@ class LocalDataSource @Inject constructor(
 
     /** region DB - TASK **/
     fun getTasksByDay(dayId: Int) = appDao.getTasksByDay(dayId)
-    fun getTask(taskId: Long) = appDao.getTask(taskId)
+    fun getActiveTask() = activeTaskId.flatMapLatest { appDao.getTask(it) }
     fun getUncompletedTaskByDay(dayId: Int) = appDao.getUncompletedTaskByDay(dayId)
-    suspend fun upsertTasks(tasks: List<TaskEntity>) = appDao.upsertTasks(tasks)
+    suspend fun resetTaskCompletedSessionsForDay(dayId: Int) = appDao.resetTasksCompletedSessionsForDay(dayId)
     suspend fun upsertTask(task: TaskEntity) = appDao.upsertTask(task)
     suspend fun deleteTask(task: TaskEntity) = appDao.deleteTask(task)
     /** endregion DB - TASK **/

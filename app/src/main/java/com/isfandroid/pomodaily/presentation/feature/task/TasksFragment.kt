@@ -122,6 +122,14 @@ class TasksFragment: Fragment() {
                 launch {
                     viewModel.selectedDayId.collectLatest {
                         binding.cgDays.check(it)
+
+                        val selectedChip = binding.cgDays.findViewById<Chip>(it)
+                        if (selectedChip != null) {
+                            binding.svDays.post {
+                                val scrollX = selectedChip.left - (binding.svDays.width / 2) + (selectedChip.width / 2)
+                                binding.svDays.smoothScrollTo(scrollX, 0)
+                            }
+                        }
                     }
                 }
 
@@ -162,7 +170,7 @@ class TasksFragment: Fragment() {
                                     else {
                                         rvItems.isVisible = true
                                         layoutError.root.isVisible = false
-                                        btnAdd.isVisible = !it.data.any { it.isNewEntry }
+                                        btnAdd.isVisible = !it.data.any { it.isNewEntry || it.isExpanded}
 
                                         taskAdapter.submitList(it.data)
                                     }

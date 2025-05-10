@@ -55,4 +55,8 @@
     <string name="txt_msg_delete_task_successful">Task deleted successfully.</string>
     <string name="txt_value_task_sessions">%d / %d</string>
     <string name="txt_no_active_task">No Active Task</string>
+    <string name="txt_value_stay_focus_for_minutes">Stay focused for %d minutes</string>
+    <string name="txt_value_take_a_break_for_minutes">Take a break for %d minutes</string>
+    <string name="txt_value_take_a_long_break_for_minutes">Take a long break %d minutes</string>
+    <string name="txt_value_timer">%02d:%02d</string>
 </resources>

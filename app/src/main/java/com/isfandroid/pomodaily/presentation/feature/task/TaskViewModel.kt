@@ -7,6 +7,7 @@ import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.ExpandableTaskUiModel
 import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.CURRENT_DAY
+import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.DataMapper.mapDomainTaskToExpandableTaskUiModel
 import com.isfandroid.pomodaily.utils.DataMapper.mapExpandableTaskUiModelToDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,18 +31,12 @@ class TaskViewModel @Inject constructor(
     private val taskRepository: TaskRepository
 ): ViewModel() {
 
-    private val _newTaskEntry = MutableStateFlow<ExpandableTaskUiModel?>(null)
-    private val _expandedTaskId = MutableStateFlow<Int?>(null)
-    private val _refreshTrigger = MutableStateFlow(Unit)
-
     private val _selectedDayId = MutableStateFlow(CURRENT_DAY)
     val selectedDayId = _selectedDayId.asStateFlow()
 
-    private val _updateTaskResult = MutableSharedFlow<UiState<Unit>>()
-    val updateTaskResult =_updateTaskResult.asSharedFlow()
-
-    private val _deleteTaskResult = MutableSharedFlow<UiState<Unit>>()
-    val deleteTaskResult =_deleteTaskResult.asSharedFlow()
+    private val _newTaskEntry = MutableStateFlow<ExpandableTaskUiModel?>(null)
+    private val _expandedTaskId = MutableStateFlow<Int?>(null)
+    private val _refreshTrigger = MutableStateFlow(Unit)
 
     val tasks: StateFlow<UiState<List<ExpandableTaskUiModel>>> =
         _selectedDayId.combine(_newTaskEntry) { dayId, newTask ->
@@ -67,9 +62,15 @@ class TaskViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
+            started = SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS),
             initialValue = UiState.Loading()
         )
+
+    private val _updateTaskResult = MutableSharedFlow<UiState<Unit>>()
+    val updateTaskResult =_updateTaskResult.asSharedFlow()
+
+    private val _deleteTaskResult = MutableSharedFlow<UiState<Unit>>()
+    val deleteTaskResult =_deleteTaskResult.asSharedFlow()
 
     fun selectDay(dayId: Int) {
         _selectedDayId.value = dayId

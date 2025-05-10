@@ -14,10 +14,13 @@ interface AppDao {
     fun getTasksByDay(dayId: Int): Flow<List<TaskEntity>>
 
     @Query("SELECT * FROM tasks WHERE id = :id")
-    fun getTask(id: Long): Flow<TaskEntity>
+    fun getTask(id: Long): Flow<TaskEntity?>
 
     @Query("SELECT * FROM tasks WHERE dayOfWeek = :dayId AND completedSessions < pomodoroSessions ORDER BY `order` ASC LIMIT 1")
     fun getUncompletedTaskByDay(dayId: Int): Flow<TaskEntity?>
+
+    @Query("UPDATE tasks SET completedSessions = 0 WHERE dayOfWeek = :dayId")
+    suspend fun resetTasksCompletedSessionsForDay(dayId: Int)
 
     @Upsert
     suspend fun upsertTask(task: TaskEntity)

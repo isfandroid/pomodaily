@@ -64,7 +64,7 @@
         android:visibility="gone"
         app:hintEnabled="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_increment"
+        app:layout_constraintEnd_toStartOf="@id/btn_decrement"
         app:layout_constraintTop_toBottomOf="@id/tv_form_title_task_pomodoro_sessions"
         >
         <com.google.android.material.textfield.TextInputEditText
@@ -77,18 +77,6 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-        android:id="@+id/btn_increment"
-        style="?attr/materialIconButtonOutlinedStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/txt_increment"
-        android:visibility="gone"
-        app:icon="@drawable/ic_chevron_up_24"
-        app:layout_constraintEnd_toStartOf="@id/btn_decrement"
-        app:layout_constraintTop_toTopOf="@id/til_task_pomodoro_sessions"
-        app:layout_constraintBottom_toBottomOf="@id/til_task_pomodoro_sessions"
-        />
-    <Button
         android:id="@+id/btn_decrement"
         style="?attr/materialIconButtonOutlinedStyle"
         android:layout_width="wrap_content"
@@ -96,10 +84,23 @@
         android:contentDescription="@string/txt_decrement"
         android:visibility="gone"
         app:icon="@drawable/ic_chevron_down_24"
+        app:layout_constraintEnd_toStartOf="@id/btn_increment"
+        app:layout_constraintTop_toTopOf="@id/til_task_pomodoro_sessions"
+        app:layout_constraintBottom_toBottomOf="@id/til_task_pomodoro_sessions"
+        />
+    <Button
+        android:id="@+id/btn_increment"
+        style="?attr/materialIconButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/txt_increment"
+        android:visibility="gone"
+        app:icon="@drawable/ic_chevron_up_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/til_task_pomodoro_sessions"
         app:layout_constraintBottom_toBottomOf="@id/til_task_pomodoro_sessions"
         />
+
 
     <!--FORMS - NOTES-->
     <TextView

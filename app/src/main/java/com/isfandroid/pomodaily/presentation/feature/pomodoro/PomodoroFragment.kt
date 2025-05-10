@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentPomodoroBinding
-import com.isfandroid.pomodaily.presentation.feature.Tasks
+import com.isfandroid.pomodaily.presentation.feature.main.Tasks
 import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_PAUSED
@@ -125,9 +125,24 @@ class PomodoroFragment: Fragment() {
                 launch {
                     viewModel.timerType.collectLatest {
                         val message = when (it) {
-                            TIMER_TYPE_POMODORO -> "Stay focused for 25 minutes"
-                            TIMER_TYPE_BREAK -> "Take a break for 5 minutes"
-                            else -> "Take a long break for 15 minutes"
+                            TIMER_TYPE_POMODORO -> {
+                                getString(
+                                    R.string.txt_value_stay_focus_for_minutes,
+                                    viewModel.pomodoroDurationMinutes.value
+                                )
+                            }
+                            TIMER_TYPE_BREAK -> {
+                                getString(
+                                    R.string.txt_value_take_a_break_for_minutes,
+                                    viewModel.breakDurationMinutes.value
+                                )
+                            }
+                            else -> {
+                                getString(
+                                    R.string.txt_value_take_a_long_break_for_minutes,
+                                    viewModel.longBreakDurationMinutes.value
+                                )
+                            }
                         }
                         binding.tvMessage.text = message
                     }
@@ -137,7 +152,7 @@ class PomodoroFragment: Fragment() {
                     viewModel.remainingTimeSeconds.collectLatest {
                         val minutes = it / 60
                         val seconds = it % 60
-                        binding.tvTimer.text = "%02d:%02d".format(minutes, seconds)
+                        binding.tvTimer.text = getString(R.string.txt_value_timer, minutes, seconds)
                     }
                 }
 
@@ -145,31 +160,38 @@ class PomodoroFragment: Fragment() {
                     viewModel.activeTask.collectLatest {
                         with(binding) {
                             when(it) {
-                                is UiState.Loading -> {
-                                }
-                                is UiState.Error -> {
-                                }
+                                is UiState.Loading -> {}
+                                is UiState.Error -> {}
                                 is UiState.Success -> {
-                                    tvNoActiveTask.visibility = View.GONE
-                                    tvActiveTaskName.visibility = View.VISIBLE
-                                    tvActiveTaskSessions.visibility = View.VISIBLE
-                                    tvActiveTaskTotalMinutes.visibility = View.VISIBLE
+                                    if (it.data == null) {
+                                        tvNoActiveTask.visibility = View.VISIBLE
+                                        tvActiveTaskName.visibility = View.GONE
+                                        tvActiveTaskSessions.visibility = View.GONE
+                                        tvActiveTaskTotalMinutes.visibility = View.GONE
+                                    } else {
+                                        tvNoActiveTask.visibility = View.GONE
+                                        tvActiveTaskName.visibility = View.VISIBLE
+                                        tvActiveTaskSessions.visibility = View.VISIBLE
+                                        tvActiveTaskTotalMinutes.visibility = View.VISIBLE
 
-                                    tvActiveTaskName.text = it.data?.name
-                                    tvActiveTaskSessions.text = getString(
-                                        R.string.txt_value_task_sessions,
-                                        it.data?.completedSessions,
-                                        it.data?.pomodoroSessions
-                                    )
-                                }
-                                null -> {
-                                    tvNoActiveTask.visibility = View.VISIBLE
-                                    tvActiveTaskName.visibility = View.GONE
-                                    tvActiveTaskSessions.visibility = View.GONE
-                                    tvActiveTaskTotalMinutes.visibility = View.GONE
+                                        tvActiveTaskName.text = it.data.name
+                                        tvActiveTaskSessions.text = getString(
+                                            R.string.txt_value_task_sessions,
+                                            it.data.completedSessions,
+                                            it.data.pomodoroSessions
+                                        )
+                                        val totalTaskDuration = it.data.pomodoroSessions * viewModel.pomodoroDurationMinutes.value
+                                        tvActiveTaskTotalMinutes.text = getString(R.string.txt_value_minutes, totalTaskDuration)
+                                    }
                                 }
                             }
                         }
+                    }
+                }
+
+                launch {
+                    viewModel.pomodoroCount.collectLatest {
+                        println("INGPO PERHITUNGAN OM : $it")
                     }
                 }
             }

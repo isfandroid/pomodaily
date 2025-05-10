@@ -53,4 +53,9 @@ class PrefsRepository @Inject constructor(
     suspend fun setActiveTaskId(value: Long) {
         localDataSource.setActiveTaskId(value)
     }
+
+    val lastResetDate = localDataSource.lastResetDate
+    suspend fun setLastResetDate(value: Long) {
+        localDataSource.setLastResetDate(value)
+    }
 }

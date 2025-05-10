@@ -13,8 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentSplashBinding
-import com.isfandroid.pomodaily.presentation.feature.OnBoarding
-import com.isfandroid.pomodaily.presentation.feature.Pomodoro
+import com.isfandroid.pomodaily.presentation.feature.main.OnBoarding
+import com.isfandroid.pomodaily.presentation.feature.main.Pomodoro
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_ON_BOARDING
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_POMODORO
 import dagger.hilt.android.AndroidEntryPoint

@@ -15,7 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentOnBoardingContainerBinding
 import com.isfandroid.pomodaily.presentation.common.adapter.ViewPagerFragmentsAdapter
-import com.isfandroid.pomodaily.presentation.feature.Pomodoro
+import com.isfandroid.pomodaily.presentation.feature.main.Pomodoro
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
