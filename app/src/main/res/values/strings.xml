@@ -59,4 +59,5 @@
     <string name="txt_take_a_break">Take a break</string>
     <string name="txt_value_timer">%02d:%02d</string>
     <string name="txt_value_pomodoro_count">#%1$s</string>
+    <string name="txt_msg_no_timer_notification_from_app">The app won\'t show timer notification</string>
 </resources>

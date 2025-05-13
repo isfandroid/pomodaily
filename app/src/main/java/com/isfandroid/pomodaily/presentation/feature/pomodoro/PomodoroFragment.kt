@@ -1,9 +1,14 @@
 package com.isfandroid.pomodaily.presentation.feature.pomodoro
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -19,6 +24,7 @@ import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_PAUSED
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_RUNNING
 import com.isfandroid.pomodaily.utils.Constant.TIMER_TYPE_POMODORO
+import com.isfandroid.pomodaily.utils.Helper.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,6 +36,16 @@ class PomodoroFragment: Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel by viewModels<PomodoroViewModel>()
+
+    private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (!isGranted) {
+            showSnackbar(
+                view = binding.root,
+                message = getString(R.string.txt_msg_no_timer_notification_from_app),
+                isError = true
+            )
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,6 +69,13 @@ class PomodoroFragment: Fragment() {
 
     private fun initViews() {
         with(binding) {
+            // Notification Permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+
             // Menu
             btnTasks.setOnClickListener {
                 findNavController().navigate(
