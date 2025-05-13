@@ -18,7 +18,6 @@ import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_PAUSED
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_RUNNING
-import com.isfandroid.pomodaily.utils.Constant.TIMER_TYPE_BREAK
 import com.isfandroid.pomodaily.utils.Constant.TIMER_TYPE_POMODORO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -76,11 +75,26 @@ class PomodoroFragment: Fragment() {
             }
 
             // Timer Action
-            btnRestart.setOnClickListener { viewModel.restartTimer() }
-            btnStart.setOnClickListener { viewModel.startTimer() }
-            btnPause.setOnClickListener { viewModel.pauseTimer() }
-            btnResume.setOnClickListener { viewModel.resumeTimer() }
-            btnSkip.setOnClickListener { viewModel.skipForward() }
+            btnRestart.setOnClickListener {
+                val intent = PomodoroService.createControlIntent(requireContext(), PomodoroService.ACTION_RESTART)
+                requireContext().startService(intent)
+            }
+            btnStart.setOnClickListener {
+                val intent = PomodoroService.createControlIntent(requireContext(), PomodoroService.ACTION_START)
+                requireContext().startService(intent)
+            }
+            btnPause.setOnClickListener {
+                val intent = PomodoroService.createControlIntent(requireContext(), PomodoroService.ACTION_PAUSE)
+                requireContext().startService(intent)
+            }
+            btnResume.setOnClickListener {
+                val intent = PomodoroService.createControlIntent(requireContext(), PomodoroService.ACTION_RESUME)
+                requireContext().startService(intent)
+            }
+            btnSkip.setOnClickListener {
+                val intent = PomodoroService.createControlIntent(requireContext(), PomodoroService.ACTION_SKIP)
+                requireContext().startService(intent)
+            }
 
             // Active Task
             cardActiveTask.setOnClickListener {
@@ -93,9 +107,10 @@ class PomodoroFragment: Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.timerState.collectLatest {
+                    viewModel.timerData.collectLatest {
                         with(binding) {
-                            when (it) {
+                            // Timer State
+                            when (it.state) {
                                 TIMER_STATE_IDLE -> {
                                     btnRestart.visibility = View.INVISIBLE
                                     btnSkip.visibility = View.INVISIBLE
@@ -118,41 +133,19 @@ class PomodoroFragment: Fragment() {
                                     btnResume.visibility = View.VISIBLE
                                 }
                             }
-                        }
-                    }
-                }
 
-                launch {
-                    viewModel.timerType.collectLatest {
-                        val message = when (it) {
-                            TIMER_TYPE_POMODORO -> {
-                                getString(
-                                    R.string.txt_value_stay_focus_for_minutes,
-                                    viewModel.pomodoroDurationMinutes.value
-                                )
+                            // Timer Type
+                            val message = when (it.type) {
+                                TIMER_TYPE_POMODORO -> getString(R.string.txt_stay_focus)
+                                else -> getString(R.string.txt_take_a_break)
                             }
-                            TIMER_TYPE_BREAK -> {
-                                getString(
-                                    R.string.txt_value_take_a_break_for_minutes,
-                                    viewModel.breakDurationMinutes.value
-                                )
-                            }
-                            else -> {
-                                getString(
-                                    R.string.txt_value_take_a_long_break_for_minutes,
-                                    viewModel.longBreakDurationMinutes.value
-                                )
-                            }
-                        }
-                        binding.tvMessage.text = message
-                    }
-                }
+                            binding.tvMessage.text = message
 
-                launch {
-                    viewModel.remainingTimeSeconds.collectLatest {
-                        val minutes = it / 60
-                        val seconds = it % 60
-                        binding.tvTimer.text = getString(R.string.txt_value_timer, minutes, seconds)
+                            // Timer Remaining Time
+                            val minutes = it.remainingTime / 60
+                            val seconds = it.remainingTime % 60
+                            binding.tvTimer.text = getString(R.string.txt_value_timer, minutes, seconds)
+                        }
                     }
                 }
 
@@ -180,18 +173,12 @@ class PomodoroFragment: Fragment() {
                                             it.data.completedSessions,
                                             it.data.pomodoroSessions
                                         )
-                                        val totalTaskDuration = it.data.pomodoroSessions * viewModel.pomodoroDurationMinutes.value
-                                        tvActiveTaskTotalMinutes.text = getString(R.string.txt_value_minutes, totalTaskDuration)
+//                                        val totalTaskDuration = it.data.pomodoroSessions * viewModel.pomodoroDurationMinutes.value
+//                                        tvActiveTaskTotalMinutes.text = getString(R.string.txt_value_minutes, totalTaskDuration)
                                     }
                                 }
                             }
                         }
-                    }
-                }
-
-                launch {
-                    viewModel.pomodoroCount.collectLatest {
-                        println("INGPO PERHITUNGAN OM : $it")
                     }
                 }
             }

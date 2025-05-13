@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    >
+
+    <TextView
+        android:id="@+id/tv_timer"
+        style="@style/Text.Bold.24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="25:00"
+        />
+    <TextView
+        android:id="@+id/tv_message"
+        style="@style/Text.Regular.14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_timer"
+        tools:text="Stay focused"
+        />
+
+    <Button
+        android:id="@+id/btn_restart"
+        style="?attr/materialIconButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/txt_restart"
+        app:icon="@drawable/ic_restart_24"
+        app:layout_constraintEnd_toStartOf="@id/btn_start"
+        app:layout_constraintTop_toTopOf="@id/btn_start"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start"
+        />
+
+    <Button
+        android:id="@+id/btn_start"
+        style="@style/Widget.Material3.Button.IconButton.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/txt_statistics"
+        app:icon="@drawable/ic_play_24"
+        app:layout_constraintEnd_toStartOf="@id/btn_skip"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <Button
+        android:id="@+id/btn_pause"
+        style="@style/Widget.Material3.Button.IconButton.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/txt_statistics"
+        android:visibility="gone"
+        app:icon="@drawable/ic_pause_24"
+        app:layout_constraintStart_toStartOf="@id/btn_start"
+        app:layout_constraintEnd_toEndOf="@id/btn_start"
+        app:layout_constraintTop_toTopOf="@id/btn_start"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start"
+        />
+    <Button
+        android:id="@+id/btn_resume"
+        style="@style/Widget.Material3.Button.IconButton.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/txt_statistics"
+        android:visibility="gone"
+        app:icon="@drawable/ic_resume_24"
+        app:layout_constraintStart_toStartOf="@id/btn_start"
+        app:layout_constraintEnd_toEndOf="@id/btn_start"
+        app:layout_constraintTop_toTopOf="@id/btn_start"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start"
+        />
+
+    <Button
+        android:id="@+id/btn_skip"
+        style="?attr/materialIconButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/txt_settings"
+        app:icon="@drawable/ic_skip_forward_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_start"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

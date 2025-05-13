@@ -4,6 +4,7 @@ import com.isfandroid.pomodaily.data.model.Task
 import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.local.LocalDataSource
 import com.isfandroid.pomodaily.utils.Constant.CURRENT_DAY
+import com.isfandroid.pomodaily.utils.Constant.MSG_NO_UNCOMPLETED_TASK
 import com.isfandroid.pomodaily.utils.DataMapper.mapDomainTaskToLocal
 import com.isfandroid.pomodaily.utils.DataMapper.mapLocalTaskToDomain
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +54,15 @@ class TaskRepository @Inject constructor(
         }.catch { e ->
             emit(Result.Error(e.message ?: "Unknown error occurred: Get Uncompleted Task by Day Id $dayId"))
         }
+
+    fun setActiveTask(taskId: Long?): Flow<Result<Unit>> = flow {
+        try {
+            localDataSource.setActiveTaskId(taskId ?: 0L)
+            emit(Result.Success(Unit))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error occurred: Set Active Task to $taskId"))
+        }
+    }.flowOn(Dispatchers.IO)
 
     fun upsertTask(task: Task): Flow<Result<Unit>> = flow {
         try {

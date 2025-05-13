@@ -65,12 +65,11 @@
         style="@style/Text.Regular.16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_timer"
         app:layout_constraintBottom_toTopOf="@id/btn_start"
-        tools:text="Stay focused for 25 minutes"
+        tools:text="Stay focused"
         />
 
     <Button
@@ -154,6 +153,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/btn_start"
         app:layout_constraintBottom_toBottomOf="@id/btn_start"
+        />
+
+    <TextView
+        android:id="@+id/tv_pomodoro_count"
+        style="@style/Text.Regular.18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnBackground"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_start"
+        app:layout_constraintBottom_toTopOf="@id/card_active_task"
+        tools:text="#1"
         />
 
     <com.google.android.material.card.MaterialCardView

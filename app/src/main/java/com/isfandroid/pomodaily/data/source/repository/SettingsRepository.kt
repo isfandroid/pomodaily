@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PrefsRepository @Inject constructor(
+class SettingsRepository @Inject constructor(
     private val localDataSource: LocalDataSource
 ) {
 
@@ -14,14 +14,19 @@ class PrefsRepository @Inject constructor(
         localDataSource.setIsOnBoardingDone(value)
     }
 
-    val pomodoroCount = localDataSource.pomodoroCount
-    suspend fun setPomodoroCount(value: Int) {
-        localDataSource.setPomodoroCount(value)
+    val lastResetDate = localDataSource.lastResetDate
+    suspend fun setLastResetDate(value: Long) {
+        localDataSource.setLastResetDate(value)
     }
 
     val pomodoroDuration = localDataSource.pomodoroDuration
     suspend fun setPomodoroDuration(value: Int) {
         localDataSource.setPomodoroDuration(value)
+    }
+
+    val pomodoroCount = localDataSource.pomodoroCount
+    suspend fun setPomodoroCount(value: Int) {
+        localDataSource.setPomodoroCount(value)
     }
 
     val breakDuration = localDataSource.breakDuration
@@ -47,15 +52,5 @@ class PrefsRepository @Inject constructor(
     val autoStartPomodoros = localDataSource.autoStartPomodoros
     suspend fun setAutoStartPomodoros(value: Boolean) {
         localDataSource.setAutoStartPomodoros(value)
-    }
-
-    val activeTaskId = localDataSource.activeTaskId
-    suspend fun setActiveTaskId(value: Long) {
-        localDataSource.setActiveTaskId(value)
-    }
-
-    val lastResetDate = localDataSource.lastResetDate
-    suspend fun setLastResetDate(value: Long) {
-        localDataSource.setLastResetDate(value)
     }
 }

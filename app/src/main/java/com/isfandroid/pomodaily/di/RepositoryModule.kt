@@ -1,7 +1,9 @@
 package com.isfandroid.pomodaily.di
 
 import com.isfandroid.pomodaily.data.source.local.LocalDataSource
-import com.isfandroid.pomodaily.data.source.repository.PrefsRepository
+import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
+import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
+import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,5 +16,13 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePrefsRepository(localDataSource: LocalDataSource) = PrefsRepository(localDataSource)
+    fun provideSettingsRepository(localDataSource: LocalDataSource) = SettingsRepository(localDataSource)
+
+    @Provides
+    @Singleton
+    fun provideTaskRepository(localDataSource: LocalDataSource) = TaskRepository(localDataSource)
+
+    @Provides
+    @Singleton
+    fun providePomodoroRepository(localDataSource: LocalDataSource) = PomodoroRepository(localDataSource)
 }
