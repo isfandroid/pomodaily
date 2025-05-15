@@ -2,8 +2,13 @@ package com.isfandroid.pomodaily.presentation.feature.main
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.isNotEmpty
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.createGraph
 import androidx.navigation.fragment.NavHostFragment
@@ -12,9 +17,13 @@ import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.ActivityMainBinding
 import com.isfandroid.pomodaily.presentation.feature.onboarding.OnBoardingContainerFragment
 import com.isfandroid.pomodaily.presentation.feature.pomodoro.PomodoroFragment
+import com.isfandroid.pomodaily.presentation.feature.settings.SettingsFragment
 import com.isfandroid.pomodaily.presentation.feature.splash.SplashFragment
 import com.isfandroid.pomodaily.presentation.feature.task.TasksFragment
+import com.isfandroid.pomodaily.utils.Constant.APP_THEME_LIGHT
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
@@ -26,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +62,13 @@ class MainActivity : AppCompatActivity() {
             fragment<PomodoroFragment, Pomodoro> {
                 label = getString(R.string.txt_pomodoro)
             }
+            fragment<SettingsFragment, Settings> {
+                label = getString(R.string.txt_settings)
+            }
         }
+
+        // Observe Data
+        observeData()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -78,6 +94,20 @@ class MainActivity : AppCompatActivity() {
             intent.action = null
         }
     }
+
+    private fun observeData() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.appTheme.collectLatest {
+                    if (it == APP_THEME_LIGHT) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
+            }
+        }
+    }
 }
 
 // SCREENS
@@ -92,3 +122,6 @@ data object Pomodoro
 
 @Serializable
 data object Tasks
+
+@Serializable
+data object Settings

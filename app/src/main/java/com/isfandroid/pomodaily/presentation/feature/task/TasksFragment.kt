@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentTasksBinding
-import com.isfandroid.pomodaily.presentation.common.adapter.TaskRecyclerAdapter
+import com.isfandroid.pomodaily.presentation.common.adapter.ExpandableTaskAdapter
 import com.isfandroid.pomodaily.presentation.common.decoration.LinearItemDecoration
 import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.DAYS_OF_WEEK
@@ -33,7 +33,7 @@ class TasksFragment: Fragment() {
     private val viewModel by viewModels<TaskViewModel>()
 
     private val taskAdapter by lazy {
-        TaskRecyclerAdapter(
+        ExpandableTaskAdapter(
             onItemClick = {
                 viewModel.deleteNewTaskEntry()
                 if (it.isExpanded) {

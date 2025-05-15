@@ -12,12 +12,12 @@ import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.ItemTaskEditableBinding
 import com.isfandroid.pomodaily.presentation.model.ExpandableTaskUiModel
 
-class TaskRecyclerAdapter(
+class ExpandableTaskAdapter(
     private val onItemClick: (ExpandableTaskUiModel) -> Unit,
     private val onDeleteClick: (ExpandableTaskUiModel) -> Unit,
     private val onCancelClick: (ExpandableTaskUiModel) -> Unit,
     private val onSaveClick: (ExpandableTaskUiModel) -> Unit,
-): ListAdapter<ExpandableTaskUiModel, TaskRecyclerAdapter.TaskViewHolder>(COMPARATOR) {
+): ListAdapter<ExpandableTaskUiModel, ExpandableTaskAdapter.TaskViewHolder>(COMPARATOR) {
 
     private var itemPomodoroSessions: Int = 1
 

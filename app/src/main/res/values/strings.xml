@@ -60,4 +60,19 @@
     <string name="txt_value_timer">%02d:%02d</string>
     <string name="txt_value_pomodoro_count">#%1$s</string>
     <string name="txt_msg_no_timer_notification_from_app">The app won\'t show timer notification</string>
+    <string name="txt_timer">Timer</string>
+    <string name="txt_general">General</string>
+    <string name="txt_pomodoro_duration">Pomodoro Duration</string>
+    <string name="txt_break_duration">Break Duration</string>
+    <string name="txt_long_breal_duration">Long Break Duration</string>
+    <string name="txt_long_break_interval">Long Break Interval</string>
+    <string name="txt_auto_start_pomodoros">Auto Start Pomodoros</string>
+    <string name="txt_auto_start_breaks">Auto Start Breaks</string>
+    <string name="txt_app_theme">App Theme</string>
+    <string name="txt_light_mode">Light Mode</string>
+    <string name="txt_dark_mode">Dark Mode</string>
+    <string name="txt_msg_field_required_cant_be_0">This field can\'t be empty or 0</string>
+    <string name="txt_minutes">Minutes</string>
+    <string name="txt_mode">Mode</string>
+    <string name="txt_msg_settings_updated">Settings updated.</string>
 </resources>
