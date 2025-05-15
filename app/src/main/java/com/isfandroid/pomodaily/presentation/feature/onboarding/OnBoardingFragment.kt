@@ -50,7 +50,7 @@ class OnBoardingFragment(
                     tvDesc.text = getString(R.string.txt_desc_on_boarding_2)
                 }
                 3 -> {
-                    ivIllustration.setImageResource(R.drawable.img_app_logo)
+                    ivIllustration.setImageResource(R.drawable.img_illustration_working)
                     tvTitle.text = getString(R.string.txt_title_on_boarding_3)
                     tvDesc.text = getString(R.string.txt_desc_on_boarding_3)
                 }
