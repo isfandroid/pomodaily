@@ -56,7 +56,7 @@ class SettingsFragment: Fragment() {
             // Settings - Timer
             itemSettingsPomodoroDuration.tvTitle.text = getString(R.string.txt_pomodoro_duration)
             itemSettingsPomodoroDuration.tvValue.visibility = View.VISIBLE
-            itemSettingsPomodoroDuration.root.setOnClickListener { 
+            itemSettingsPomodoroDuration.root.setOnClickListener {
                 showUpdateBottomSheet(
                     title = getString(R.string.txt_pomodoro_duration),
                     formTitle = getString(R.string.txt_minutes),
@@ -132,14 +132,14 @@ class SettingsFragment: Fragment() {
 
             itemSettingsAutoStartPomodoros.tvTitle.text = getString(R.string.txt_auto_start_pomodoros)
             itemSettingsAutoStartPomodoros.switchValue.visibility = View.VISIBLE
-            itemSettingsAutoStartPomodoros.switchValue.setOnCheckedChangeListener { _, isChecked ->
-                viewModel.setAutoStartPomodoros(isChecked)
+            itemSettingsAutoStartPomodoros.switchValue.setOnClickListener {
+                viewModel.setAutoStartPomodoros(!viewModel.autoStartPomodoros.value)
             }
 
             itemSettingsAutoStartBreaks.tvTitle.text = getString(R.string.txt_auto_start_breaks)
             itemSettingsAutoStartBreaks.switchValue.visibility = View.VISIBLE
-            itemSettingsAutoStartBreaks.switchValue.setOnCheckedChangeListener { _, isChecked ->
-                viewModel.setAutoStartBreaks(isChecked)
+            itemSettingsAutoStartBreaks.switchValue.setOnClickListener {
+                viewModel.setAutoStartBreaks(!viewModel.autoStartBreaks.value)
             }
             
             // Settings - General

@@ -2,6 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.utils.Constant.APP_THEME_LIGHT
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_BREAKS
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val pomodoroRepository: PomodoroRepository,
 ): ViewModel() {
 
     // Timer
@@ -31,19 +33,28 @@ class SettingsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_LONG_BREAK_MINUTES)
     val longBreakInterval = settingsRepository.longBreakInterval
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_LONG_BREAK_INTERVAL)
-    val autoStartBreaks = settingsRepository.autoStartBreaks
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_AUTO_START_BREAKS)
     val autoStartPomodoros = settingsRepository.autoStartPomodoros
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_AUTO_START_POMODOROS)
+    val autoStartBreaks = settingsRepository.autoStartBreaks
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_AUTO_START_BREAKS)
 
     fun setPomodoroDuration(value: Int) {
-        viewModelScope.launch { settingsRepository.setPomodoroDuration(value) }
+        viewModelScope.launch {
+            settingsRepository.setPomodoroDuration(value)
+            pomodoroRepository.resetTimerForCurrentType()
+        }
     }
     fun setBreakDuration(value: Int) {
-        viewModelScope.launch { settingsRepository.setBreakDuration(value) }
+        viewModelScope.launch {
+            settingsRepository.setBreakDuration(value)
+            pomodoroRepository.resetTimerForCurrentType()
+        }
     }
     fun setLongBreakDuration(value: Int) {
-        viewModelScope.launch { settingsRepository.setLongBreakDuration(value) }
+        viewModelScope.launch {
+            settingsRepository.setLongBreakDuration(value)
+            pomodoroRepository.resetTimerForCurrentType()
+        }
     }
     fun setLongBreakInterval(value: Int) {
         viewModelScope.launch { settingsRepository.setLongBreakInterval(value) }

@@ -160,8 +160,12 @@ class TasksFragment: Fragment() {
                                         layoutError.root.isVisible = true
                                         btnAdd.visibility = View.GONE
 
+                                        val dayName = DAYS_OF_WEEK.first { day ->
+                                            day["id"] == viewModel.selectedDayId.value
+                                        }["name"] as String
+                                        layoutError.ivIllustration.setImageResource(R.drawable.img_illustration_empty)
                                         layoutError.tvTitle.text = getString(R.string.txt_empty_data)
-                                        layoutError.tvDesc.text = getString(R.string.txt_msg_no_tasks_for_this_day)
+                                        layoutError.tvDesc.text = getString(R.string.txt_value_no_tasks_for_day, dayName)
                                         layoutError.btnAction.text = getString(R.string.txt_add_task)
                                         layoutError.btnAction.setOnClickListener {
                                             viewModel.addNewTaskEntry()
@@ -172,6 +176,7 @@ class TasksFragment: Fragment() {
                                         layoutError.root.isVisible = false
                                         btnAdd.isVisible = !it.data.any { it.isNewEntry || it.isExpanded}
 
+                                        taskAdapter.submitList(emptyList())
                                         taskAdapter.submitList(it.data)
                                     }
                                 }

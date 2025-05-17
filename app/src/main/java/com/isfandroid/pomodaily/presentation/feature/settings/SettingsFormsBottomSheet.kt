@@ -22,7 +22,7 @@ class SettingsFormsBottomSheet (
 ): BottomSheetDialogFragment() {
 
     companion object {
-        val TAG = BottomSheetDialogFragment::class.java.simpleName
+        const val TAG = "SettingsFormsBottomSheet"
     }
 
     private var _binding: DialogSettingsFormsBinding? = null
@@ -32,9 +32,9 @@ class SettingsFormsBottomSheet (
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = DialogSettingsFormsBinding.inflate(inflater, container, false)
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,6 +58,8 @@ class SettingsFormsBottomSheet (
                 tvFormMultipleChoices.visibility = View.GONE
                 tilMultipleChoices.visibility = View.GONE
                 tvFormTitleNumber.text = formTitle
+                btnIncrement.visibility = View.VISIBLE
+                btnDecrement.visibility = View.VISIBLE
 
                 etNumber.setText(numberFormValue.toString())
                 etNumber.doOnTextChanged { _, _, _, _ ->

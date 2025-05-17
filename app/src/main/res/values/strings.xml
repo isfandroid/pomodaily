@@ -37,6 +37,7 @@
     <string name="txt_retry">Retry</string>
     <string name="txt_empty_data">Empty Data</string>
     <string name="txt_msg_no_tasks_for_this_day">No tasks for this day.</string>
+    <string name="txt_value_no_tasks_for_day">No tasks for %s.</string>
     <string name="txt_add_tasks">Add Tasks</string>
     <string name="txt_msg_field_required">This field is required.</string>
 
@@ -75,4 +76,6 @@
     <string name="txt_minutes">Minutes</string>
     <string name="txt_mode">Mode</string>
     <string name="txt_msg_settings_updated">Settings updated.</string>
+    <string name="txt_delete_task">Delete Task</string>
+    <string name="txt_msg_ask_delete_task_confirmation">Are you sure want to delete this task?</string>
 </resources>
