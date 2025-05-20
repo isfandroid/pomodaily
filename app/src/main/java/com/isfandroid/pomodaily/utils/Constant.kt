@@ -67,8 +67,4 @@ object Constant {
     const val POMODORO_NOTIFICATION_ID = 1
     const val POMODORO_CHANNEL_ID = "CHANNEL_01"
     const val POMODORO_CHANNEL_NAME = "POMODAILY_POMODORO_CHANNEL"
-
-    // MSG
-    const val MSG_NO_UNCOMPLETED_TASK = "MSG_NO_UNCOMPLETED_TASK"
-
 }

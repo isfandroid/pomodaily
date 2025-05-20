@@ -1,92 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
     >
 
-    <TextView
-        android:id="@+id/tv_timer"
-        style="@style/Text.Bold.24"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="25:00"
-        />
-    <TextView
-        android:id="@+id/tv_message"
-        style="@style/Text.Regular.14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_timer"
-        tools:text="Stay focused"
-        />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        >
+        <TextView
+            android:id="@+id/tv_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:textColor="@color/white"
+            tools:text="25:00"
+            />
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            tools:text="Stay focused"
+            />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_restart"
-        style="?attr/materialIconButtonOutlinedStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/txt_restart"
-        app:icon="@drawable/ic_restart_24"
-        app:layout_constraintEnd_toStartOf="@id/btn_start"
-        app:layout_constraintTop_toTopOf="@id/btn_start"
-        app:layout_constraintBottom_toBottomOf="@id/btn_start"
-        />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|end"
+        >
+        <ImageView
+            android:id="@+id/btn_restart"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/txt_restart"
+            android:src="@drawable/ic_restart_24"
+            />
 
-    <Button
-        android:id="@+id/btn_start"
-        style="@style/Widget.Material3.Button.IconButton.Filled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/txt_statistics"
-        app:icon="@drawable/ic_play_24"
-        app:layout_constraintEnd_toStartOf="@id/btn_skip"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-    <Button
-        android:id="@+id/btn_pause"
-        style="@style/Widget.Material3.Button.IconButton.Filled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/txt_statistics"
-        android:visibility="gone"
-        app:icon="@drawable/ic_pause_24"
-        app:layout_constraintStart_toStartOf="@id/btn_start"
-        app:layout_constraintEnd_toEndOf="@id/btn_start"
-        app:layout_constraintTop_toTopOf="@id/btn_start"
-        app:layout_constraintBottom_toBottomOf="@id/btn_start"
-        />
-    <Button
-        android:id="@+id/btn_resume"
-        style="@style/Widget.Material3.Button.IconButton.Filled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/txt_statistics"
-        android:visibility="gone"
-        app:icon="@drawable/ic_resume_24"
-        app:layout_constraintStart_toStartOf="@id/btn_start"
-        app:layout_constraintEnd_toEndOf="@id/btn_start"
-        app:layout_constraintTop_toTopOf="@id/btn_start"
-        app:layout_constraintBottom_toBottomOf="@id/btn_start"
-        />
+        <ImageView
+            android:id="@+id/btn_start"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/txt_start"
+            android:src="@drawable/ic_play_24"
+            />
+        <ImageView
+            android:id="@+id/btn_pause"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/txt_pause"
+            android:visibility="gone"
+            android:src="@drawable/ic_pause_24"
+            />
+        <ImageView
+            android:id="@+id/btn_resume"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/txt_resume"
+            android:visibility="gone"
+            android:src="@drawable/ic_resume_24"
+            />
 
-    <Button
-        android:id="@+id/btn_skip"
-        style="?attr/materialIconButtonOutlinedStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/txt_settings"
-        app:icon="@drawable/ic_skip_forward_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btn_start"
-        app:layout_constraintBottom_toBottomOf="@id/btn_start"
-        />
+        <ImageView
+            android:id="@+id/btn_skip"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/txt_skip"
+            android:src="@drawable/ic_skip_forward_24"
+            />
+    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

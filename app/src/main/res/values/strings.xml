@@ -44,6 +44,7 @@
     <string name="txt_value_pomodoro_sessions">%d Pomodoro Sessions</string>
     <string name="txt_value_est_pomodoro">%d/%d</string>
     <string name="txt_value_minutes">%d minutes</string>
+    <string name="txt_value_minutes_left">%d minutes left</string>
     <string name="txt_pomodoro">Pomodoro</string>
     <string name="txt_restart">Restart</string>
     <string name="txt_pomodoro_sessions">Pomodoro Sessions</string>
@@ -54,7 +55,7 @@
     <string name="txt_skip">Skip</string>
     <string name="txt_msg_delete_task_failed">Failed to delete task</string>
     <string name="txt_msg_delete_task_successful">Task deleted successfully.</string>
-    <string name="txt_value_task_sessions">%d / %d</string>
+    <string name="txt_value_task_sessions">%d / %d Pomodoro</string>
     <string name="txt_no_active_task">No Active Task</string>
     <string name="txt_stay_focus">Stay focus</string>
     <string name="txt_take_a_break">Take a break</string>
@@ -82,4 +83,10 @@
     <string name="txt_copy_tasks">Copy Tasks</string>
     <string name="txt_msg_copy_tasks_failed">Failed to copy tasks.</string>
     <string name="txt_msg_add_tasks_successful">Tasks added successfully.</string>
+    <string name="txt_stopped">Stopped</string>
+    <string name="txt_paused">Paused</string>
+    <string name="txt_pomodaily_timer">Pomodaily Timer</string>
+    <string name="txt_start">Start</string>
+    <string name="txt_pause">Pause</string>
+    <string name="txt_resume">Resume</string>
 </resources>

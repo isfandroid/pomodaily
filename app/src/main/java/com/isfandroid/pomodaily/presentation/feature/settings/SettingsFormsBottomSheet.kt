@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.DialogSettingsFormsBinding
@@ -103,7 +102,7 @@ class SettingsFormsBottomSheet (
                 (acMultipleChoices as MaterialAutoCompleteTextView).setSimpleItems(multipleChoicesItems.orEmpty())
 
                 val adapter = ArrayAdapter(requireContext(), R.layout.item_selection, multipleChoicesItems.orEmpty())
-                (acMultipleChoices as MaterialAutoCompleteTextView).setAdapter(adapter)
+                acMultipleChoices.setAdapter(adapter)
 
                 btnSubmit.setOnClickListener {
                     onSubmit.invoke(acMultipleChoices.text.toString())

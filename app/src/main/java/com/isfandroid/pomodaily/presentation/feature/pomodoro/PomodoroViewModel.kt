@@ -6,8 +6,10 @@ import com.isfandroid.pomodaily.data.model.Task
 import com.isfandroid.pomodaily.data.model.TimerData
 import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
+import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.resource.UiState
+import com.isfandroid.pomodaily.utils.Constant.DEFAULT_POMODORO_MINUTES
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
 import com.isfandroid.pomodaily.utils.Constant.TIMER_TYPE_POMODORO
@@ -22,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PomodoroViewModel @Inject constructor(
     private val pomodoroRepository: PomodoroRepository,
+    settingsRepository: SettingsRepository,
     taskRepository: TaskRepository,
 ): ViewModel() {
 
@@ -43,6 +46,13 @@ class PomodoroViewModel @Inject constructor(
                 type = TIMER_TYPE_POMODORO,
                 state = TIMER_STATE_IDLE
             )
+        )
+
+    val pomodoroDuration: StateFlow<Int> = settingsRepository.pomodoroDuration
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS),
+            DEFAULT_POMODORO_MINUTES
         )
 
     init {

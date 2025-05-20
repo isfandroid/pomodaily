@@ -10,6 +10,8 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
+import android.view.View
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import com.isfandroid.pomodaily.R
@@ -108,54 +110,59 @@ class PomodoroService: Service() {
             pendingIntentFlags
         )
 
-        val title = "Pomodoro"
         val remainingTime = getString(R.string.txt_value_timer, timerData.remainingTime/60, timerData.remainingTime%60)
-        val contentText = when (timerData.state) {
-            TIMER_STATE_RUNNING -> "Time left: $remainingTime"
-            TIMER_STATE_PAUSED -> "Paused - $remainingTime"
-            else -> "Stopped"
+        val message = when (timerData.state) {
+            TIMER_STATE_RUNNING -> {
+                if (timerData.type == TIMER_TYPE_POMODORO) {
+                    getString(R.string.txt_stay_focus)
+                } else {
+                    getString(R.string.txt_take_a_break)
+                }
+            }
+            TIMER_STATE_PAUSED -> getString(R.string.txt_paused)
+            else -> getString(R.string.txt_stopped)
+        }
+
+        val notificationLayout = RemoteViews(packageName, R.layout.notification_timer).apply {
+            setTextViewText(R.id.tv_timer, remainingTime)
+            setTextViewText(R.id.tv_message, message)
+            setOnClickPendingIntent(R.id.btn_restart, createActionPendingIntent(ACTION_RESTART))
+            setOnClickPendingIntent(R.id.btn_start, createActionPendingIntent(ACTION_START))
+            setOnClickPendingIntent(R.id.btn_pause, createActionPendingIntent(ACTION_PAUSE))
+            setOnClickPendingIntent(R.id.btn_resume, createActionPendingIntent(ACTION_RESUME))
+            setOnClickPendingIntent(R.id.btn_skip, createActionPendingIntent(ACTION_SKIP))
+
+            when (timerData.state) {
+                TIMER_STATE_RUNNING -> {
+                    setViewVisibility(R.id.btn_restart, View.VISIBLE)
+                    setViewVisibility(R.id.btn_skip, View.VISIBLE)
+                    setViewVisibility(R.id.btn_start, View.GONE)
+                    setViewVisibility(R.id.btn_pause, View.VISIBLE)
+                    setViewVisibility(R.id.btn_resume, View.GONE)
+                }
+                TIMER_STATE_PAUSED -> {
+                    setViewVisibility(R.id.btn_restart, View.VISIBLE)
+                    setViewVisibility(R.id.btn_skip, View.VISIBLE)
+                    setViewVisibility(R.id.btn_start, View.GONE)
+                    setViewVisibility(R.id.btn_pause, View.GONE)
+                    setViewVisibility(R.id.btn_resume, View.VISIBLE)
+                }
+                else -> {}
+            }
         }
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationBuilder = NotificationCompat.Builder(this, POMODORO_CHANNEL_ID)
-            .setContentTitle(title)
-            .setContentText(contentText)
-            .setSmallIcon(R.drawable.ic_tasks_24)
+            .setSmallIcon(R.drawable.ic_app_logo)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(notificationLayout)
+            .setCustomBigContentView(notificationLayout)
             .setContentIntent(pendingIntent)
             .setOnlyAlertOnce(true)
             .setOngoing(timerData.state == TIMER_STATE_RUNNING)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
             notificationBuilder.setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
-        }
-
-        // Add actions based on state
-        when (timerData.state) {
-            TIMER_STATE_RUNNING -> {
-                notificationBuilder.addAction(
-                    R.drawable.ic_pause_24,
-                    "Pause",
-                    createActionPendingIntent(ACTION_PAUSE)
-                )
-                notificationBuilder.addAction(
-                    R.drawable.ic_skip_forward_24,
-                    "Skip",
-                    createActionPendingIntent(ACTION_SKIP)
-                )
-            }
-            TIMER_STATE_PAUSED -> {
-                notificationBuilder.addAction(
-                    R.drawable.ic_resume_24,
-                    "Resume",
-                    createActionPendingIntent(ACTION_RESUME)
-                )
-                notificationBuilder.addAction(
-                    R.drawable.ic_restart_24,
-                    "Stop",
-                    createActionPendingIntent(ACTION_RESTART)
-                )
-            }
-            else -> {}
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -283,11 +290,13 @@ class PomodoroService: Service() {
                 }
                 pomodoroRepository.resetTimerForCurrentType()
 
-                // Set how to start the break
+                // Set how to start/stop the break
                 if (autoStartBreaks) {
                     startCountdown()
                 } else {
                     pomodoroRepository.setTimerState(TIMER_STATE_IDLE)
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                    stopSelf()
                 }
             } else {
                 // Set type to pomodoro & reset timer
@@ -303,11 +312,13 @@ class PomodoroService: Service() {
                     }
                 }
 
-                // Set how to start pomodoro
+                // Set how to start/stop pomodoro
                 if (autoStartPomodoros) {
                     startCountdown()
                 } else {
                     pomodoroRepository.setTimerState(TIMER_STATE_IDLE)
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                    stopSelf()
                 }
             }
         }
