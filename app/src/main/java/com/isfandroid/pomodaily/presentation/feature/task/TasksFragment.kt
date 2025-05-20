@@ -16,7 +16,7 @@ import com.google.android.material.chip.Chip
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentTasksBinding
 import com.isfandroid.pomodaily.presentation.common.adapter.ExpandableTaskAdapter
-import com.isfandroid.pomodaily.presentation.common.decoration.LinearItemDecoration
+import com.isfandroid.pomodaily.presentation.common.helper.RecyclerViewLinearItemDecoration
 import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.DAYS_OF_WEEK
 import com.isfandroid.pomodaily.utils.Helper.showSnackbar
@@ -100,7 +100,7 @@ class TasksFragment: Fragment() {
             rvItems.layoutManager = LinearLayoutManager(requireContext())
             rvItems.adapter = taskAdapter
             rvItems.addItemDecoration(
-                LinearItemDecoration(
+                RecyclerViewLinearItemDecoration(
                     topSpace = resources.getDimensionPixelSize(R.dimen.dimen_0),
                     bottomSpace = resources.getDimensionPixelSize(R.dimen.dimen_16),
                     rightSpace = resources.getDimensionPixelSize(R.dimen.dimen_0),
@@ -174,9 +174,8 @@ class TasksFragment: Fragment() {
                                     else {
                                         rvItems.isVisible = true
                                         layoutError.root.isVisible = false
-                                        btnAdd.isVisible = !it.data.any { it.isNewEntry || it.isExpanded}
+                                        btnAdd.isVisible = !it.data.any { it.isNewEntry || it.isExpanded }
 
-                                        taskAdapter.submitList(emptyList())
                                         taskAdapter.submitList(it.data)
                                     }
                                 }
@@ -186,21 +185,34 @@ class TasksFragment: Fragment() {
                 }
 
                 launch {
-                    viewModel.updateTaskResult.collectLatest {
-                        when(it) {
-                            is UiState.Loading -> {
-                                // TODO: showUpdateTaskLoading(true)
+                    viewModel.daysWithTasks.collectLatest { result ->
+                        if (result is UiState.Success && !result.data.isNullOrEmpty() && viewModel.tasks.value is UiState.Success && viewModel.tasks.value.data.isNullOrEmpty()) {
+                            binding.layoutError.btnSecondaryAction.visibility = View.VISIBLE
+                            binding.layoutError.btnSecondaryAction.text = getString(R.string.txt_copy_tasks)
+                            binding.layoutError.btnSecondaryAction.setOnClickListener {
+                                val dayIds = result.data.orEmpty()
+                                val days = DAYS_OF_WEEK.filter { mDays ->
+                                    (mDays["id"] as Int) in dayIds
+                                }
+                                showCopyTasksBottomSheet(days)
                             }
-                            is UiState.Error -> {
-                                // TODO: showUpdateTaskLoading(false)
+                        } else {
+                            binding.layoutError.btnSecondaryAction.visibility = View.GONE
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.updateTaskResult.collectLatest {
+                        when {
+                            it is UiState.Error -> {
                                 showSnackbar(
                                     view = binding.root,
                                     message = getString(R.string.txt_msg_update_tasks_failed),
                                     isError = true
                                 )
                             }
-                            is UiState.Success -> {
-                                // TODO: showUpdateTaskLoading(false)
+                            it is UiState.Success -> {
                                 showSnackbar(
                                     view = binding.root,
                                     message = getString(R.string.txt_msg_update_tasks_successful),
@@ -213,23 +225,39 @@ class TasksFragment: Fragment() {
 
                 launch {
                     viewModel.deleteTaskResult.collectLatest {
-                        when(it) {
-                            is UiState.Loading -> {
-                                // TODO: showDeleteTaskLoading(true)
-                            }
-                            is UiState.Error -> {
-                                // TODO: showDeleteTaskLoading(false)
+                        when {
+                            it is UiState.Error -> {
                                 showSnackbar(
                                     view = binding.root,
                                     message = getString(R.string.txt_msg_delete_task_failed),
                                     isError = true
                                 )
                             }
-                            is UiState.Success -> {
-                                // TODO: showDeleteTaskLoading(false)
+                            it is UiState.Success -> {
                                 showSnackbar(
                                     view = binding.root,
                                     message = getString(R.string.txt_msg_delete_task_successful),
+                                    isError = false
+                                )
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.copyTasksResult.collectLatest {
+                        when {
+                            it is UiState.Error -> {
+                                showSnackbar(
+                                    view = binding.root,
+                                    message = getString(R.string.txt_msg_copy_tasks_failed),
+                                    isError = true
+                                )
+                            }
+                            it is UiState.Success -> {
+                                showSnackbar(
+                                    view = binding.root,
+                                    message = getString(R.string.txt_msg_add_tasks_successful),
                                     isError = false
                                 )
                             }
@@ -247,10 +275,20 @@ class TasksFragment: Fragment() {
         chip.text = dayName
         chip.isCheckable = true
         chip.setOnClickListener {
+            viewModel.deleteNewTaskEntry()
             viewModel.selectDay(dayId)
         }
 
         binding.cgDays.addView(chip)
         return chip
+    }
+
+    private fun showCopyTasksBottomSheet(days: List<Map<String, Any>>) {
+        CopyTasksBottomSheet(
+            days = days,
+            onSubmit = { selectedDayId ->
+                viewModel.copyTasks(selectedDayId, viewModel.selectedDayId.value)
+            }
+        ).show(childFragmentManager, CopyTasksBottomSheet.TAG)
     }
 }

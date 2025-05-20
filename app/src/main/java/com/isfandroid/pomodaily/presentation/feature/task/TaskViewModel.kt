@@ -38,8 +38,8 @@ class TaskViewModel @Inject constructor(
     private val _expandedTaskId = MutableStateFlow<Int?>(null)
     private val _refreshTrigger = MutableStateFlow(Unit)
 
-    val tasks: StateFlow<UiState<List<ExpandableTaskUiModel>>> =
-        _selectedDayId.combine(_newTaskEntry) { dayId, newTask ->
+    val tasks: StateFlow<UiState<List<ExpandableTaskUiModel>>> = _selectedDayId
+        .combine(_newTaskEntry) { dayId, newTask ->
             Pair(dayId, newTask)
         }.combine(_expandedTaskId) { (dayId, newTask), expandedId ->
             Triple(dayId, newTask, expandedId)
@@ -66,11 +66,27 @@ class TaskViewModel @Inject constructor(
             initialValue = UiState.Loading()
         )
 
+    val daysWithTasks: StateFlow<UiState<List<Int>>> = tasks.flatMapLatest {
+            taskRepository.getDaysWithTasks().map {
+                when (it) {
+                    is Result.Success -> UiState.Success(it.data)
+                    is Result.Error -> UiState.Error(it.message)
+                }
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS),
+            initialValue = UiState.Loading()
+        )
+
     private val _updateTaskResult = MutableSharedFlow<UiState<Unit>>()
     val updateTaskResult =_updateTaskResult.asSharedFlow()
 
     private val _deleteTaskResult = MutableSharedFlow<UiState<Unit>>()
     val deleteTaskResult =_deleteTaskResult.asSharedFlow()
+
+    private val _copyTasksResult = MutableSharedFlow<UiState<Unit>>()
+    val copyTasksResult =_copyTasksResult.asSharedFlow()
 
     fun selectDay(dayId: Int) {
         _selectedDayId.value = dayId
@@ -122,6 +138,17 @@ class TaskViewModel @Inject constructor(
                 when(it) {
                     is Result.Success -> _deleteTaskResult.emit(UiState.Success(Unit))
                     is Result.Error -> _deleteTaskResult.emit(UiState.Error(it.message))
+                }
+            }
+        }
+    }
+
+    fun copyTasks(fromDay: Int, toDay: Int) {
+        viewModelScope.launch {
+            taskRepository.copyTasks(fromDay, toDay).collect {
+                when(it) {
+                    is Result.Success -> _copyTasksResult.emit(UiState.Success(Unit))
+                    is Result.Error -> _copyTasksResult.emit(UiState.Error(it.message))
                 }
             }
         }

@@ -78,4 +78,8 @@
     <string name="txt_msg_settings_updated">Settings updated.</string>
     <string name="txt_delete_task">Delete Task</string>
     <string name="txt_msg_ask_delete_task_confirmation">Are you sure want to delete this task?</string>
+    <string name="txt_msg_choose_tasks_source">Choose Tasks source</string>
+    <string name="txt_copy_tasks">Copy Tasks</string>
+    <string name="txt_msg_copy_tasks_failed">Failed to copy tasks.</string>
+    <string name="txt_msg_add_tasks_successful">Tasks added successfully.</string>
 </resources>

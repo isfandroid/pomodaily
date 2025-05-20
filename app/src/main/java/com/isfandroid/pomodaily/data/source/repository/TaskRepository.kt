@@ -4,7 +4,6 @@ import com.isfandroid.pomodaily.data.model.Task
 import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.local.LocalDataSource
 import com.isfandroid.pomodaily.utils.Constant.CURRENT_DAY
-import com.isfandroid.pomodaily.utils.Constant.MSG_NO_UNCOMPLETED_TASK
 import com.isfandroid.pomodaily.utils.DataMapper.mapDomainTaskToLocal
 import com.isfandroid.pomodaily.utils.DataMapper.mapLocalTaskToDomain
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +54,13 @@ class TaskRepository @Inject constructor(
             emit(Result.Error(e.message ?: "Unknown error occurred: Get Uncompleted Task by Day Id $dayId"))
         }
 
+    fun getDaysWithTasks() = localDataSource.getDaysWithTasks()
+        .map {
+            Result.Success(it) as Result<List<Int>>
+        }.catch { e ->
+            emit(Result.Error(e.message ?: "Unknown error occurred: Get Days with Tasks"))
+        }
+
     fun setActiveTask(taskId: Long?): Flow<Result<Unit>> = flow {
         try {
             localDataSource.setActiveTaskId(taskId ?: 0L)
@@ -66,17 +72,37 @@ class TaskRepository @Inject constructor(
 
     fun upsertTask(task: Task): Flow<Result<Unit>> = flow {
         try {
-            val localTask = mapDomainTaskToLocal(task)
-            localDataSource.upsertTask(localTask)
-
+            // Set new entry task as active task if no tasks set to active
             if (task.id == 0 && localDataSource.activeTaskId.first() == 0L) {
                 val uncompletedTask = localDataSource.getUncompletedTaskByDay(CURRENT_DAY).first()
                 localDataSource.setActiveTaskId(uncompletedTask?.id ?: 0L)
             }
 
+            // Map domain to local task
+            val localTask = mapDomainTaskToLocal(task)
+            localDataSource.upsertTask(localTask)
+
             emit(Result.Success(Unit))
         } catch (e: Exception) {
             emit(Result.Error(e.message ?: "Unknown error occurred: Add or Update Task $task"))
+        }
+    }.flowOn(Dispatchers.IO)
+
+    fun copyTasks(fromDay: Int, toDay: Int): Flow<Result<Unit>> = flow {
+        try {
+            val tasksSource = localDataSource.getTasksByDay(fromDay).first()
+            val newTasks = tasksSource.map {
+                it.copy(
+                    id = 0L,
+                    completedSessions = 0,
+                    dayOfWeek = toDay
+                )
+            }
+            localDataSource.upsertTasks(newTasks)
+
+            emit(Result.Success(Unit))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error occurred: Copy Task from $fromDay to $toDay"))
         }
     }.flowOn(Dispatchers.IO)
 

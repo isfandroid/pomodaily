@@ -19,6 +19,9 @@ interface AppDao {
     @Query("SELECT * FROM tasks WHERE dayOfWeek = :dayId AND completedSessions < pomodoroSessions ORDER BY `order` ASC LIMIT 1")
     fun getUncompletedTaskByDay(dayId: Int): Flow<TaskEntity?>
 
+    @Query("SELECT DISTINCT dayOfWeek FROM tasks")
+    fun getDaysWithTasks(): Flow<List<Int>>
+
     @Query("UPDATE tasks SET completedSessions = 0 WHERE dayOfWeek = :dayId")
     suspend fun resetTasksCompletedSessionsForDay(dayId: Int)
 

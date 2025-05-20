@@ -179,8 +179,10 @@ class LocalDataSource @Inject constructor(
     fun getTasksByDay(dayId: Int) = appDao.getTasksByDay(dayId)
     fun getActiveTask() = activeTaskId.flatMapLatest { appDao.getTask(it) }
     fun getUncompletedTaskByDay(dayId: Int) = appDao.getUncompletedTaskByDay(dayId)
+    fun getDaysWithTasks() = appDao.getDaysWithTasks()
     suspend fun resetTaskCompletedSessionsForDay(dayId: Int) = appDao.resetTasksCompletedSessionsForDay(dayId)
     suspend fun upsertTask(task: TaskEntity) = appDao.upsertTask(task)
+    suspend fun upsertTasks(tasks: List<TaskEntity>) = appDao.upsertTasks(tasks)
     suspend fun deleteTask(task: TaskEntity) = appDao.deleteTask(task)
     /** endregion DB - TASK **/
 }

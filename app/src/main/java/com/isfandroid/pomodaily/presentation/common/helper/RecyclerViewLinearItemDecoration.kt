@@ -1,10 +1,10 @@
-package com.isfandroid.pomodaily.presentation.common.decoration
+package com.isfandroid.pomodaily.presentation.common.helper
 
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class LinearItemDecoration(
+class RecyclerViewLinearItemDecoration(
     private val topSpace: Int,
     private val bottomSpace: Int,
     private val rightSpace: Int,
