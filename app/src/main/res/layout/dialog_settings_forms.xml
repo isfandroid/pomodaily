@@ -120,6 +120,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
+            android:dropDownSelector="@color/base_chip_background_primary"
+            android:popupBackground="@drawable/rect_background_rounded_8"
             tools:ignore="LabelFor"
             />
     </com.google.android.material.textfield.TextInputLayout>

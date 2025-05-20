@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.DialogSettingsFormsBinding
@@ -97,11 +99,14 @@ class SettingsFormsBottomSheet (
                 tilNumber.visibility = View.INVISIBLE
                 tvFormMultipleChoices.text = formTitle
 
-                (tilMultipleChoices.editText as MaterialAutoCompleteTextView).setSimpleItems(multipleChoicesItems.orEmpty())
                 acMultipleChoices.setText(multipleChoicesFormValue)
+                (acMultipleChoices as MaterialAutoCompleteTextView).setSimpleItems(multipleChoicesItems.orEmpty())
+
+                val adapter = ArrayAdapter(requireContext(), R.layout.item_selection, multipleChoicesItems.orEmpty())
+                (acMultipleChoices as MaterialAutoCompleteTextView).setAdapter(adapter)
 
                 btnSubmit.setOnClickListener {
-                    onSubmit.invoke(acMultipleChoices.text)
+                    onSubmit.invoke(acMultipleChoices.text.toString())
                     dismiss()
                 }
             }

@@ -194,12 +194,12 @@ class PomodoroFragment: Fragment() {
                                         tvNoActiveTask.visibility = View.VISIBLE
                                         tvActiveTaskName.visibility = View.GONE
                                         tvActiveTaskSessions.visibility = View.GONE
-                                        tvActiveTaskTotalMinutes.visibility = View.GONE
+                                        tvActiveTaskTotalDuration.visibility = View.GONE
                                     } else {
                                         tvNoActiveTask.visibility = View.GONE
                                         tvActiveTaskName.visibility = View.VISIBLE
                                         tvActiveTaskSessions.visibility = View.VISIBLE
-                                        tvActiveTaskTotalMinutes.visibility = View.VISIBLE
+                                        tvActiveTaskTotalDuration.visibility = View.VISIBLE
 
                                         tvActiveTaskName.text = it.data.name
                                         tvActiveTaskSessions.text = getString(

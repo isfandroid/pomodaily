@@ -183,17 +183,17 @@ class SettingsFragment: Fragment() {
                 // Settings - Timer
                 launch {
                     viewModel.pomodoroDuration.collectLatest {
-                        binding.itemSettingsPomodoroDuration.tvValue.text = it.toString()
+                        binding.itemSettingsPomodoroDuration.tvValue.text = getString(R.string.txt_value_minutes, it)
                     }
                 }
                 launch {
                     viewModel.breakDuration.collectLatest {
-                        binding.itemSettingsBreakDuration.tvValue.text = it.toString()
+                        binding.itemSettingsBreakDuration.tvValue.text = getString(R.string.txt_value_minutes, it)
                     }
                 }
                 launch {
                     viewModel.longBreakDuration.collectLatest {
-                        binding.itemSettingsLongBreakDuration.tvValue.text = it.toString()
+                        binding.itemSettingsLongBreakDuration.tvValue.text = getString(R.string.txt_value_minutes, it)
                     }
                 }
                 launch {
