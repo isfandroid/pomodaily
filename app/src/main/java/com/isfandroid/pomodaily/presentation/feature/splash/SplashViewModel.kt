@@ -27,7 +27,7 @@ class SplashViewModel @Inject constructor(
 
     private fun checkNavDestination() {
         viewModelScope.launch {
-            delay(1000)
+            delay(1000L)
             if (settingsRepository.isOnBoardingDone.first()) {
                 _navDestination.emit(NAV_DESTINATION_POMODORO)
             } else {

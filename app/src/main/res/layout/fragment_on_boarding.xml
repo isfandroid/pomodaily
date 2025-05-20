@@ -19,7 +19,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/tv_title"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:src="@drawable/img_app_logo"
         />
     <TextView
         android:id="@+id/tv_title"
