@@ -89,4 +89,8 @@
     <string name="txt_start">Start</string>
     <string name="txt_pause">Pause</string>
     <string name="txt_resume">Resume</string>
+    <string name="txt_to_do">To Do</string>
+    <string name="txt_done">Done</string>
+    <string name="txt_schedule">Schedule</string>
+    <string name="txt_msg_no_tasks_for_today">No tasks for today. Add tasks in Tasks page.</string>
 </resources>

@@ -30,7 +30,6 @@ class ExpandableTaskAdapter(
         val data = getItem(position)
         itemPomodoroSessions = data.pomodoroSessions ?: 0
         holder.bind(data)
-
     }
 
     inner class TaskViewHolder(private val binding: ItemTaskEditableBinding): RecyclerView.ViewHolder(binding.root) {

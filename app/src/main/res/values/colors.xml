@@ -34,5 +34,6 @@
 
     <!--GENERAL-->
     <color name="black">#000000</color>
+    <color name="black_shadow">#40000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

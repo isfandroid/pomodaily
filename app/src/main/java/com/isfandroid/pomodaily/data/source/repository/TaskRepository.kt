@@ -21,6 +21,7 @@ class TaskRepository @Inject constructor(
     private val localDataSource: LocalDataSource
 ) {
 
+
     fun getTasksByDay(dayId: Int): Flow<Result<List<Task>>> = localDataSource.getTasksByDay(dayId)
         .map { localTasks ->
             val tasks = localTasks.map { mapLocalTaskToDomain(it) }
@@ -30,6 +31,7 @@ class TaskRepository @Inject constructor(
             emit(Result.Error(e.message ?: "Unknown error occurred: Get Tasks by Day Id $dayId"))
         }
 
+    val activeTaskId = localDataSource.activeTaskId
     fun getActiveTask(): Flow<Result<Task?>> = localDataSource.getActiveTask()
         .map {
             if (it == null) {

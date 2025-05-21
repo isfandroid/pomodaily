@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentPomodoroBinding
+import com.isfandroid.pomodaily.presentation.feature.main.Schedule
 import com.isfandroid.pomodaily.presentation.feature.main.Settings
 import com.isfandroid.pomodaily.presentation.feature.main.Tasks
 import com.isfandroid.pomodaily.presentation.resource.UiState
@@ -132,7 +133,17 @@ class PomodoroFragment: Fragment() {
 
             // Active Task
             cardActiveTask.setOnClickListener {
-                // TODO: Navigate to Schedule
+                findNavController().navigate(
+                    route = Schedule,
+                    navOptions = navOptions {
+                        anim {
+                            enter = R.anim.slide_in_right
+                            exit = R.anim.slide_out_left
+                            popEnter = R.anim.slide_in_left
+                            popExit = R.anim.slide_out_right
+                        }
+                    },
+                )
             }
         }
     }
