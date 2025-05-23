@@ -1,7 +1,5 @@
 package com.isfandroid.pomodaily.utils
 
-import java.util.Calendar
-
 object Constant {
     // DATA - LOCAL - PREFS
     const val APP_PREFS = "APP_PREFS"
@@ -30,18 +28,6 @@ object Constant {
 
     // DATA - LOCAL - DATABASE
     const val DB_NAME = "pomodaily.db"
-
-    // DATA - DAYS
-    val DAYS_OF_WEEK = listOf(
-        mapOf("id" to Calendar.SUNDAY, "name" to "Sunday"),
-        mapOf("id" to Calendar.MONDAY, "name" to "Monday"),
-        mapOf("id" to Calendar.TUESDAY, "name" to "Tuesday"),
-        mapOf("id" to Calendar.WEDNESDAY, "name" to "Wednesday"),
-        mapOf("id" to Calendar.THURSDAY, "name" to "Thursday"),
-        mapOf("id" to Calendar.FRIDAY, "name" to "Friday"),
-        mapOf("id" to Calendar.SATURDAY, "name" to "Saturday"),
-    )
-    val CURRENT_DAY = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
 
     // NAVIGATION
     const val NAV_DESTINATION_ON_BOARDING = "NAV_DESTINATION_ON_BOARDING"

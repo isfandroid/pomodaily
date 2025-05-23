@@ -92,11 +92,11 @@ class SettingsFragment: Fragment() {
                 )
             }
             
-            itemSettingsLongBreakDuration.tvTitle.text = getString(R.string.txt_long_breal_duration)
+            itemSettingsLongBreakDuration.tvTitle.text = getString(R.string.txt_long_break_duration)
             itemSettingsLongBreakDuration.tvValue.visibility = View.VISIBLE
             itemSettingsLongBreakDuration.root.setOnClickListener {
                 showUpdateBottomSheet(
-                    title = getString(R.string.txt_long_breal_duration),
+                    title = getString(R.string.txt_long_break_duration),
                     formTitle = getString(R.string.txt_minutes),
                     isNumber = true,
                     numValue = viewModel.longBreakDuration.value,

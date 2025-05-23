@@ -20,6 +20,7 @@ import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentPomodoroBinding
 import com.isfandroid.pomodaily.presentation.feature.main.Schedule
 import com.isfandroid.pomodaily.presentation.feature.main.Settings
+import com.isfandroid.pomodaily.presentation.feature.main.Statistics
 import com.isfandroid.pomodaily.presentation.feature.main.Tasks
 import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
@@ -93,7 +94,17 @@ class PomodoroFragment: Fragment() {
                 )
             }
             btnStats.setOnClickListener {
-                // TODO: Navigate to Stats
+                findNavController().navigate(
+                    route = Statistics,
+                    navOptions = navOptions {
+                        anim {
+                            enter = R.anim.slide_in_right
+                            exit = R.anim.slide_out_left
+                            popEnter = R.anim.slide_in_left
+                            popExit = R.anim.slide_out_right
+                        }
+                    },
+                )
             }
             btnSettings.setOnClickListener {
                 findNavController().navigate(

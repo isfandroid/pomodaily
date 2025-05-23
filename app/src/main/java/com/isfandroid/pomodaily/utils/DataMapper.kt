@@ -1,6 +1,8 @@
 package com.isfandroid.pomodaily.utils
 
 import com.isfandroid.pomodaily.data.model.Task
+import com.isfandroid.pomodaily.data.model.TaskCompletionLog
+import com.isfandroid.pomodaily.data.source.local.model.TaskCompletionLogEntity
 import com.isfandroid.pomodaily.data.source.local.model.TaskEntity
 import com.isfandroid.pomodaily.presentation.model.ExpandableTaskUiModel
 
@@ -46,5 +48,11 @@ object DataMapper {
         pomodoroSessions = input.pomodoroSessions ?: 0,
         completedSessions = input.completedSessions ?: 0,
         note = input.note
+    )
+
+    fun mapDomainTaskCompletionLogToLocal(input: TaskCompletionLog) = TaskCompletionLogEntity(
+        id = input.id,
+        taskId = input.taskId,
+        completionDate = input.completionDate
     )
 }

@@ -6,10 +6,10 @@ import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.ExpandableTaskUiModel
 import com.isfandroid.pomodaily.presentation.resource.UiState
-import com.isfandroid.pomodaily.utils.Constant.CURRENT_DAY
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.DataMapper.mapDomainTaskToExpandableTaskUiModel
 import com.isfandroid.pomodaily.utils.DataMapper.mapExpandableTaskUiModelToDomain
+import com.isfandroid.pomodaily.utils.DateUtils.CURRENT_DAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,14 +38,15 @@ class TaskViewModel @Inject constructor(
     private val _expandedTaskId = MutableStateFlow<Int?>(null)
     private val _refreshTrigger = MutableStateFlow(Unit)
 
-    val tasks: StateFlow<UiState<List<ExpandableTaskUiModel>>> = _selectedDayId
-        .combine(_newTaskEntry) { dayId, newTask ->
-            Pair(dayId, newTask)
-        }.combine(_expandedTaskId) { (dayId, newTask), expandedId ->
-            Triple(dayId, newTask, expandedId)
-        }.combine(_refreshTrigger) { (dayId, newTask, expandedId), _ ->
-            Triple(dayId, newTask, expandedId)
-        }.flatMapLatest { (dayId, newTask, expandedId) ->
+    val tasks: StateFlow<UiState<List<ExpandableTaskUiModel>>> = combine(
+        _selectedDayId,
+        _newTaskEntry,
+        _expandedTaskId,
+        _refreshTrigger
+    ) { dayId, newTaskEntry, expandedTaskId, _ ->
+        Triple(dayId, newTaskEntry, expandedTaskId)
+    }
+        .flatMapLatest { (dayId, newTask, expandedId) ->
             taskRepository.getTasksByDay(dayId).map { result ->
                 when (result) {
                     is Result.Success -> {
@@ -60,7 +61,8 @@ class TaskViewModel @Inject constructor(
                     is Result.Error -> UiState.Error(result.message)
                 }
             }
-        }.stateIn(
+        }
+        .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS),
             initialValue = UiState.Loading()

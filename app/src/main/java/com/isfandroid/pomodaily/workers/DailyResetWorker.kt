@@ -6,7 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
-import com.isfandroid.pomodaily.utils.Constant.CURRENT_DAY
+import com.isfandroid.pomodaily.utils.DateUtils.CURRENT_DAY
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first

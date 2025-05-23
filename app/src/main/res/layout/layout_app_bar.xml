@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
     >
 
     <ImageView
@@ -14,24 +15,26 @@
         android:layout_height="24dp"
         android:src="@drawable/ic_arrow_left_24_on_background"
         android:contentDescription="@string/txt_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         />
-
     <TextView
         android:id="@+id/tv_title"
         style="@style/Text.Bold.18"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:layout_marginStart="16dp"
         android:maxLines="1"
         android:ellipsize="end"
-        app:layout_constraintStart_toEndOf="@id/btn_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="App Bar"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/btn_action"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:contentDescription="@string/txt_action"
+        android:visibility="gone"
+        tools:src="@drawable/ic_info_24_on_background"
+        />
+</LinearLayout>

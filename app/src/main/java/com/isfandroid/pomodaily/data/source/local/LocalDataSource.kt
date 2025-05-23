@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.isfandroid.pomodaily.data.source.local.database.AppDao
+import com.isfandroid.pomodaily.data.source.local.model.TaskCompletionLogEntity
 import com.isfandroid.pomodaily.data.source.local.model.TaskEntity
 import com.isfandroid.pomodaily.utils.Constant.APP_THEME_LIGHT
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_BREAKS
@@ -180,9 +181,13 @@ class LocalDataSource @Inject constructor(
     fun getActiveTask() = activeTaskId.flatMapLatest { appDao.getTask(it) }
     fun getUncompletedTaskByDay(dayId: Int) = appDao.getUncompletedTaskByDay(dayId)
     fun getDaysWithTasks() = appDao.getDaysWithTasks()
+    fun getTotalTasksByDay(dayId: Int) = appDao.getTotalTasksByDay(dayId)
+    fun getTotalCompletedTasksBetween(startTimeMillis: Long, endTimeMillis: Long) = appDao.getTotalCompletedTasksBetween(startTimeMillis, endTimeMillis)
     suspend fun resetTaskCompletedSessionsForDay(dayId: Int) = appDao.resetTasksCompletedSessionsForDay(dayId)
     suspend fun upsertTask(task: TaskEntity) = appDao.upsertTask(task)
     suspend fun upsertTasks(tasks: List<TaskEntity>) = appDao.upsertTasks(tasks)
     suspend fun deleteTask(task: TaskEntity) = appDao.deleteTask(task)
+    suspend fun insertTaskCompletionLog(log: TaskCompletionLogEntity) = appDao.insertTaskCompletionLog(log)
+    suspend fun deleteTaskCompletionLogsByTaskId(taskId: Long) = appDao.deleteTaskCompletionLogsByTaskId(taskId)
     /** endregion DB - TASK **/
 }

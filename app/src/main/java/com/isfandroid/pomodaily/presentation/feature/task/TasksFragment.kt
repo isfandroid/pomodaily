@@ -18,7 +18,7 @@ import com.isfandroid.pomodaily.databinding.FragmentTasksBinding
 import com.isfandroid.pomodaily.presentation.common.adapter.ExpandableTaskAdapter
 import com.isfandroid.pomodaily.presentation.common.helper.RecyclerViewLinearItemDecoration
 import com.isfandroid.pomodaily.presentation.resource.UiState
-import com.isfandroid.pomodaily.utils.Constant.DAYS_OF_WEEK
+import com.isfandroid.pomodaily.utils.DateUtils.DAYS_OF_WEEK
 import com.isfandroid.pomodaily.utils.Helper.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -160,9 +160,7 @@ class TasksFragment: Fragment() {
                                         layoutError.root.isVisible = true
                                         btnAdd.visibility = View.GONE
 
-                                        val dayName = DAYS_OF_WEEK.first { day ->
-                                            day["id"] == viewModel.selectedDayId.value
-                                        }["name"] as String
+                                        val dayName = DAYS_OF_WEEK.first { day -> day["id"] == viewModel.selectedDayId.value }["name"] as String
                                         layoutError.ivIllustration.setImageResource(R.drawable.img_illustration_empty)
                                         layoutError.tvTitle.text = getString(R.string.txt_empty_data)
                                         layoutError.tvDesc.text = getString(R.string.txt_value_no_tasks_for_day, dayName)

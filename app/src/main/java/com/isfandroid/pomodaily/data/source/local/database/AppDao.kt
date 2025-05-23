@@ -2,8 +2,10 @@ package com.isfandroid.pomodaily.data.source.local.database
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
+import com.isfandroid.pomodaily.data.source.local.model.TaskCompletionLogEntity
 import com.isfandroid.pomodaily.data.source.local.model.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -22,6 +24,12 @@ interface AppDao {
     @Query("SELECT DISTINCT dayOfWeek FROM tasks")
     fun getDaysWithTasks(): Flow<List<Int>>
 
+    @Query("SELECT COUNT(*) FROM task_completion_logs WHERE completionDate >= :startTimeMillis AND completionDate <= :endTimeMillis")
+    fun getTotalCompletedTasksBetween(startTimeMillis: Long, endTimeMillis: Long): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM tasks WHERE dayOfWeek = :dayId")
+    fun getTotalTasksByDay(dayId: Int): Flow<Int>
+
     @Query("UPDATE tasks SET completedSessions = 0 WHERE dayOfWeek = :dayId")
     suspend fun resetTasksCompletedSessionsForDay(dayId: Int)
 
@@ -33,4 +41,10 @@ interface AppDao {
 
     @Delete
     suspend fun deleteTask(task: TaskEntity)
+
+    @Insert
+    suspend fun insertTaskCompletionLog(completionLog: TaskCompletionLogEntity)
+
+    @Query("DELETE FROM task_completion_logs WHERE taskId = :taskId")
+    suspend fun deleteTaskCompletionLogsByTaskId(taskId: Long)
 }

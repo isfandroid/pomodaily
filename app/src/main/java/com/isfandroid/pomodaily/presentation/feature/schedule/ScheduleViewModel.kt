@@ -7,8 +7,8 @@ import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.TaskScheduleUiModel
 import com.isfandroid.pomodaily.presentation.resource.UiState
-import com.isfandroid.pomodaily.utils.Constant.CURRENT_DAY
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
+import com.isfandroid.pomodaily.utils.DateUtils.CURRENT_DAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted

@@ -20,6 +20,7 @@ import com.isfandroid.pomodaily.presentation.feature.pomodoro.PomodoroFragment
 import com.isfandroid.pomodaily.presentation.feature.schedule.ScheduleFragment
 import com.isfandroid.pomodaily.presentation.feature.settings.SettingsFragment
 import com.isfandroid.pomodaily.presentation.feature.splash.SplashFragment
+import com.isfandroid.pomodaily.presentation.feature.stats.StatsFragment
 import com.isfandroid.pomodaily.presentation.feature.task.TasksFragment
 import com.isfandroid.pomodaily.utils.Constant.APP_THEME_LIGHT
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,6 +63,9 @@ class MainActivity : AppCompatActivity() {
             }
             fragment<PomodoroFragment, Pomodoro> {
                 label = getString(R.string.txt_pomodoro)
+            }
+            fragment<StatsFragment, Statistics> {
+                label = getString(R.string.txt_statistics)
             }
             fragment<ScheduleFragment, Schedule> {
                 label = getString(R.string.txt_schedule)
@@ -129,6 +133,9 @@ data object Schedule
 
 @Serializable
 data object Tasks
+
+@Serializable
+data object Statistics
 
 @Serializable
 data object Settings

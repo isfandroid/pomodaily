@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rect_surface_rounded_8"
+    android:padding="16dp"
+    >
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/Text.SemiBold.16"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Today"
+        />
+
+    <TextView
+        android:id="@+id/tv_tasks_count"
+        style="@style/Text.Bold.24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        tools:text="2 / 4 Tasks Done"
+        />
+    <TextView
+        android:id="@+id/tv_difference"
+        style="@style/Text.Regular.14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:gravity="center"
+        android:drawablePadding="4dp"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_arrow_up_16_on_surface"
+        app:layout_constraintStart_toEndOf="@id/tv_tasks_count"
+        app:layout_constraintTop_toTopOf="@id/tv_tasks_count"
+        app:layout_constraintBottom_toBottomOf="@id/tv_tasks_count"
+        tools:text="18%"
+        />
+
+    <TextView
+        android:id="@+id/tv_previous_tasks_count"
+        style="@style/Text.Regular.14"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_tasks_count"
+        tools:text="Yesterday: -"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
