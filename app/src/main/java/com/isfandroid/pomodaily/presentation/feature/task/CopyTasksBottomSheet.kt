@@ -1,5 +1,6 @@
 package com.isfandroid.pomodaily.presentation.feature.task
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -53,7 +54,19 @@ class CopyTasksBottomSheet(
                 radioButton.text = data["name"] as String
                 radioButton.isChecked = index == 0
                 radioButton.setTextAppearance(R.style.Text_Regular_14)
-                radioButton.highlightColor = MaterialColors.getColor(this.root, com.google.android.material.R.attr.colorPrimary)
+
+                val checkedColor = MaterialColors.getColor(binding.root, androidx.appcompat.R.attr.colorPrimary)
+                val uncheckedColor = MaterialColors.getColor(binding.root, com.google.android.material.R.attr.colorOnBackground)
+                val states = arrayOf(
+                    intArrayOf(android.R.attr.state_checked),
+                    intArrayOf(-android.R.attr.state_checked)
+                )
+                val colors = intArrayOf(
+                    checkedColor,
+                    uncheckedColor
+                )
+                radioButton.buttonTintList = ColorStateList(states, colors)
+
                 rgDays.addView(radioButton)
             }
 
