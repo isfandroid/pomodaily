@@ -33,8 +33,7 @@ class DailyResetWorker @AssistedInject constructor (
             return Result.failure()
         }
 
-        val activeTaskResult = taskRepository.getUncompletedTaskByDay(CURRENT_DAY).first()
-        if (activeTaskResult !is com.isfandroid.pomodaily.data.resource.Result.Success) {
+        if (taskRepository.getUncompletedTaskByDay(CURRENT_DAY).first() == null) {
             return Result.failure()
         }
 

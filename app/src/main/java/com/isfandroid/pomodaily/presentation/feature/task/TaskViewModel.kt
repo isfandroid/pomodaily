@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.ExpandableTaskUiModel
-import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.DataMapper.mapDomainTaskToExpandableTaskUiModel
 import com.isfandroid.pomodaily.utils.DataMapper.mapExpandableTaskUiModelToDomain
@@ -15,7 +14,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -36,66 +34,49 @@ class TaskViewModel @Inject constructor(
 
     private val _newTaskEntry = MutableStateFlow<ExpandableTaskUiModel?>(null)
     private val _expandedTaskId = MutableStateFlow<Int?>(null)
-    private val _refreshTrigger = MutableStateFlow(Unit)
 
-    val tasks: StateFlow<UiState<List<ExpandableTaskUiModel>>> = combine(
+    val tasks = combine(
         _selectedDayId,
         _newTaskEntry,
         _expandedTaskId,
-        _refreshTrigger
-    ) { dayId, newTaskEntry, expandedTaskId, _ ->
+    ) { dayId, newTaskEntry, expandedTaskId ->
         Triple(dayId, newTaskEntry, expandedTaskId)
     }
-        .flatMapLatest { (dayId, newTask, expandedId) ->
-            taskRepository.getTasksByDay(dayId).map { result ->
-                when (result) {
-                    is Result.Success -> {
-                        val savedTasks = result.data.map {
-                            mapDomainTaskToExpandableTaskUiModel(it).copy(
-                                isExpanded = expandedId == it.id,
-                            )
-                        }
-                        val combinedTasks = newTask?.let { savedTasks + it } ?: savedTasks
-                        UiState.Success(combinedTasks)
-                    }
-                    is Result.Error -> UiState.Error(result.message)
+        .flatMapLatest { (dayId, newTaskEntry, expandedTaskId) ->
+            taskRepository.getTasksByDay(dayId).map { tasks ->
+                val savedTasks = tasks.map {
+                    mapDomainTaskToExpandableTaskUiModel(it).copy(
+                        isExpanded = expandedTaskId == it.id,
+                    )
                 }
+                newTaskEntry?.let { savedTasks + it } ?: savedTasks
             }
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS),
-            initialValue = UiState.Loading()
+            initialValue = emptyList()
         )
 
-    val daysWithTasks: StateFlow<UiState<List<Int>>> = tasks.flatMapLatest {
-            taskRepository.getDaysWithTasks().map {
-                when (it) {
-                    is Result.Success -> UiState.Success(it.data)
-                    is Result.Error -> UiState.Error(it.message)
-                }
-            }
-        }.stateIn(
+    val daysWithTasks = tasks
+        .flatMapLatest { taskRepository.daysWithTasks }
+        .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS),
-            initialValue = UiState.Loading()
+            initialValue = emptyList()
         )
 
-    private val _updateTaskResult = MutableSharedFlow<UiState<Unit>>()
+    private val _updateTaskResult = MutableSharedFlow<Result<Unit>>()
     val updateTaskResult =_updateTaskResult.asSharedFlow()
 
-    private val _deleteTaskResult = MutableSharedFlow<UiState<Unit>>()
+    private val _deleteTaskResult = MutableSharedFlow<Result<Unit>>()
     val deleteTaskResult =_deleteTaskResult.asSharedFlow()
 
-    private val _copyTasksResult = MutableSharedFlow<UiState<Unit>>()
+    private val _copyTasksResult = MutableSharedFlow<Result<Unit>>()
     val copyTasksResult =_copyTasksResult.asSharedFlow()
 
     fun selectDay(dayId: Int) {
         _selectedDayId.value = dayId
-    }
-
-    fun refreshTasks() {
-        _refreshTrigger.value = Unit
     }
 
     fun addNewTaskEntry() {
@@ -126,8 +107,8 @@ class TaskViewModel @Inject constructor(
             val domainTask = mapExpandableTaskUiModelToDomain(task)
             taskRepository.upsertTask(domainTask).collect {
                 when(it) {
-                    is Result.Success -> _updateTaskResult.emit(UiState.Success(Unit))
-                    is Result.Error -> _updateTaskResult.emit(UiState.Error(it.message))
+                    is Result.Success -> _updateTaskResult.emit(Result.Success(Unit))
+                    is Result.Error -> _updateTaskResult.emit(Result.Error(it.message))
                 }
             }
         }
@@ -138,8 +119,8 @@ class TaskViewModel @Inject constructor(
             val domainTask = mapExpandableTaskUiModelToDomain(task)
             taskRepository.deleteTask(domainTask).collect {
                 when(it) {
-                    is Result.Success -> _deleteTaskResult.emit(UiState.Success(Unit))
-                    is Result.Error -> _deleteTaskResult.emit(UiState.Error(it.message))
+                    is Result.Success -> _deleteTaskResult.emit(Result.Success(Unit))
+                    is Result.Error -> _deleteTaskResult.emit(Result.Error(it.message))
                 }
             }
         }
@@ -149,8 +130,8 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch {
             taskRepository.copyTasks(fromDay, toDay).collect {
                 when(it) {
-                    is Result.Success -> _copyTasksResult.emit(UiState.Success(Unit))
-                    is Result.Error -> _copyTasksResult.emit(UiState.Error(it.message))
+                    is Result.Success -> _copyTasksResult.emit(Result.Success(Unit))
+                    is Result.Error -> _copyTasksResult.emit(Result.Error(it.message))
                 }
             }
         }

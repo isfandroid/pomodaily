@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -25,9 +24,7 @@ import javax.inject.Singleton
 class TaskRepository @Inject constructor(
     private val localDataSource: LocalDataSource
 ) {
-
-    val activeTaskId = localDataSource.activeTaskId
-
+    /** region ATTRIBUTES **/
     val totalTasksCompletedToday = localDataSource.getTotalCompletedTasksBetween(
         DateUtils.getTodayStartMillis(), DateUtils.getTodayEndMillis()
     )
@@ -58,46 +55,24 @@ class TaskRepository @Inject constructor(
         totalPerDayArray.toMap()
     }
 
-    fun getTasksByDay(dayId: Int): Flow<Result<List<Task>>> = localDataSource.getTasksByDay(dayId)
-        .map { localTasks ->
-            val tasks = localTasks.map { mapLocalTaskToDomain(it) }
-            Result.Success(tasks) as Result<List<Task>>
-        }
-        .catch { e ->
-            emit(Result.Error(e.message ?: "Unknown error occurred: Get Tasks by Day Id $dayId"))
-        }
+    val activeTask = localDataSource.getActiveTask()
+        .map { if (it == null) null else mapLocalTaskToDomain(it) }
+        .catch { emit(null) }
 
-    fun getActiveTask(): Flow<Result<Task?>> = localDataSource.getActiveTask()
-        .map {
-            if (it == null) {
-                Result.Success(null)
-            } else {
-                val task = mapLocalTaskToDomain(it)
-                Result.Success(task) as Result<Task>
-            }
-        }.catch { e ->
-            emit(Result.Error(e.message ?: "Unknown error occurred: Get Active Task"))
+    val daysWithTasks = localDataSource.getDaysWithTasks()
+
+    fun getTasksByDay(dayId: Int) = localDataSource.getTasksByDay(dayId)
+        .map { localTasks ->
+            localTasks.map { mapLocalTaskToDomain(it) }
         }
+        .catch { emit(emptyList()) }
 
     fun getUncompletedTaskByDay(dayId: Int) = localDataSource.getUncompletedTaskByDay(dayId)
-        .map {
-            if (it == null) {
-                Result.Success(null)
-            } else {
-                val task = mapLocalTaskToDomain(it)
-                Result.Success(task) as Result<Task>
-            }
-        }.catch { e ->
-            emit(Result.Error(e.message ?: "Unknown error occurred: Get Uncompleted Task by Day Id $dayId"))
-        }
+        .map { if (it == null) null else mapLocalTaskToDomain(it) }
+        .catch { emit(null) }
+    /** endregion ATTRIBUTES **/
 
-    fun getDaysWithTasks() = localDataSource.getDaysWithTasks()
-        .map {
-            Result.Success(it) as Result<List<Int>>
-        }.catch { e ->
-            emit(Result.Error(e.message ?: "Unknown error occurred: Get Days with Tasks"))
-        }
-
+    /** region ACTIONS **/
     fun setActiveTask(taskId: Long?): Flow<Result<Unit>> = flow {
         try {
             localDataSource.setActiveTaskId(taskId ?: 0L)
@@ -179,4 +154,5 @@ class TaskRepository @Inject constructor(
             emit(Result.Error(e.message ?: "Unknown error occurred: Insert Task Completion Log"))
         }
     }.flowOn(Dispatchers.IO)
+    /** endregion ACTIONS **/
 }

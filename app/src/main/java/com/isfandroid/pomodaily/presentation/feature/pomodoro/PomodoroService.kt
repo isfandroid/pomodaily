@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.data.model.TaskCompletionLog
 import com.isfandroid.pomodaily.data.model.TimerData
-import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
@@ -269,7 +268,7 @@ class PomodoroService: Service() {
             val longBreakInterval = settingsRepository.longBreakInterval.first()
             val autoStartPomodoros = settingsRepository.autoStartPomodoros.first()
             val autoStartBreaks = settingsRepository.autoStartBreaks.first()
-            val activeTask = taskRepository.getActiveTask().first()
+            val activeTask = taskRepository.activeTask.first()
             val uncompletedTask = taskRepository.getUncompletedTaskByDay(CURRENT_DAY).first()
 
             if (timerType == TIMER_TYPE_POMODORO) {
@@ -277,9 +276,9 @@ class PomodoroService: Service() {
                 settingsRepository.setPomodoroCount(pomodoroCount + 1)
 
                 // Increment Active Task (if any) completed sessions
-                if (activeTask is Result.Success && activeTask.data != null) {
-                    val updatedTask = activeTask.data.copy(
-                        completedSessions = activeTask.data.completedSessions + 1
+                if (activeTask != null) {
+                    val updatedTask = activeTask.copy(
+                        completedSessions = activeTask.completedSessions + 1
                     )
                     taskRepository.upsertTask(updatedTask).collect()
                 }
@@ -305,20 +304,20 @@ class PomodoroService: Service() {
                 pomodoroRepository.setTimerType(TIMER_TYPE_POMODORO)
                 pomodoroRepository.resetTimerForCurrentType()
 
-                if (activeTask is Result.Success && activeTask.data != null) {
+                if (activeTask != null) {
                     // Add new completion log entry if active task is completed
-                    if (activeTask.data.completedSessions == activeTask.data.pomodoroSessions) {
+                    if (activeTask.completedSessions == activeTask.pomodoroSessions) {
                         taskRepository.insertTaskCompletionLog(
                             TaskCompletionLog(
-                                taskId = (activeTask.data.id ?: 0).toLong(),
+                                taskId = (activeTask.id ?: 0).toLong(),
                                 completionDate = Calendar.getInstance().timeInMillis
                             )
                         ).collect()
                     }
 
                     // Set next active task (if theres any uncompleted session)
-                    if (uncompletedTask is Result.Success && uncompletedTask.data != null) {
-                        taskRepository.setActiveTask((uncompletedTask.data.id ?: 0).toLong()).collect()
+                    if (uncompletedTask != null) {
+                        taskRepository.setActiveTask((uncompletedTask.id ?: 0).toLong()).collect()
                     } else {
                         taskRepository.setActiveTask(null).collect()
                     }

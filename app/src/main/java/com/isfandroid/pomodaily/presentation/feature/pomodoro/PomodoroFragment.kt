@@ -22,7 +22,6 @@ import com.isfandroid.pomodaily.presentation.feature.main.Schedule
 import com.isfandroid.pomodaily.presentation.feature.main.Settings
 import com.isfandroid.pomodaily.presentation.feature.main.Statistics
 import com.isfandroid.pomodaily.presentation.feature.main.Tasks
-import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_PAUSED
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_RUNNING
@@ -208,27 +207,25 @@ class PomodoroFragment: Fragment() {
                 launch {
                     viewModel.activeTask.collectLatest {
                         with(binding) {
-                            if (it is UiState.Success) {
-                                if (it.data == null) {
-                                    tvNoActiveTask.visibility = View.VISIBLE
-                                    tvActiveTaskName.visibility = View.GONE
-                                    tvActiveTaskSessions.visibility = View.GONE
-                                    tvActiveTaskRemainingTime.visibility = View.GONE
-                                } else {
-                                    tvNoActiveTask.visibility = View.GONE
-                                    tvActiveTaskName.visibility = View.VISIBLE
-                                    tvActiveTaskSessions.visibility = View.VISIBLE
-                                    tvActiveTaskRemainingTime.visibility = View.VISIBLE
+                            if (it == null) {
+                                tvNoActiveTask.visibility = View.VISIBLE
+                                tvActiveTaskName.visibility = View.GONE
+                                tvActiveTaskSessions.visibility = View.GONE
+                                tvActiveTaskRemainingTime.visibility = View.GONE
+                            } else {
+                                tvNoActiveTask.visibility = View.GONE
+                                tvActiveTaskName.visibility = View.VISIBLE
+                                tvActiveTaskSessions.visibility = View.VISIBLE
+                                tvActiveTaskRemainingTime.visibility = View.VISIBLE
 
-                                    tvActiveTaskName.text = it.data.name
-                                    tvActiveTaskSessions.text = getString(
-                                        R.string.txt_value_task_sessions,
-                                        it.data.completedSessions,
-                                        it.data.pomodoroSessions
-                                    )
-                                    val remainingMinutes = (it.data.pomodoroSessions - it.data.completedSessions) * viewModel.pomodoroDuration.value
-                                    tvActiveTaskRemainingTime.text = getString(R.string.txt_value_minutes_left, remainingMinutes)
-                                }
+                                tvActiveTaskName.text = it.name
+                                tvActiveTaskSessions.text = getString(
+                                    R.string.txt_value_task_sessions,
+                                    it.completedSessions,
+                                    it.pomodoroSessions
+                                )
+                                val remainingMinutes = (it.pomodoroSessions - it.completedSessions) * viewModel.pomodoroDuration.value
+                                tvActiveTaskRemainingTime.text = getString(R.string.txt_value_minutes_left, remainingMinutes)
                             }
                         }
                     }

@@ -16,7 +16,6 @@ import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentScheduleBinding
 import com.isfandroid.pomodaily.presentation.common.adapter.TaskScheduleAdapter
 import com.isfandroid.pomodaily.presentation.common.helper.RecyclerViewLinearItemDecoration
-import com.isfandroid.pomodaily.presentation.resource.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -114,21 +113,17 @@ class ScheduleFragment: Fragment() {
 
                 launch {
                     viewModel.todoTasks.collectLatest {
-                        if (it is UiState.Success) {
-                            binding.tvToDo.isVisible = !it.data.isNullOrEmpty()
-                            binding.rvToDo.isVisible = !it.data.isNullOrEmpty()
-                            todoTaskAdapter.submitList(it.data)
-                        }
+                        binding.tvToDo.isVisible = it.isNotEmpty()
+                        binding.rvToDo.isVisible = it.isNotEmpty()
+                        todoTaskAdapter.submitList(it)
                     }
                 }
 
                 launch {
                     viewModel.doneTasks.collectLatest {
-                        if (it is UiState.Success) {
-                            binding.tvDone.isVisible = !it.data.isNullOrEmpty()
-                            binding.rvDone.isVisible = !it.data.isNullOrEmpty()
-                            doneTaskAdapter.submitList(it.data)
-                        }
+                        binding.tvDone.isVisible = it.isNotEmpty()
+                        binding.rvDone.isVisible = it.isNotEmpty()
+                        doneTaskAdapter.submitList(it)
                     }
                 }
             }

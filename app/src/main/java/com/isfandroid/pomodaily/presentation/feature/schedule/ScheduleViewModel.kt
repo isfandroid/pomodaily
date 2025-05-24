@@ -2,11 +2,9 @@ package com.isfandroid.pomodaily.presentation.feature.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.TaskScheduleUiModel
-import com.isfandroid.pomodaily.presentation.resource.UiState
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.DateUtils.CURRENT_DAY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,60 +25,50 @@ class ScheduleViewModel @Inject constructor(
 ): ViewModel() {
 
     val isTasksEmpty = taskRepository.getTasksByDay(CURRENT_DAY)
-        .map {
-            it is Result.Success && it.data.isEmpty()
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), false)
+        .map { it.isEmpty() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), false)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val todoTasks = taskRepository.activeTaskId
-        .combine(settingsRepository.pomodoroDuration) { activeTaskId, pomodoroDuration ->
-            Pair(activeTaskId, pomodoroDuration)
-        }.flatMapLatest { (activeTaskId, pomodoroDuration) ->
-            taskRepository.getTasksByDay(CURRENT_DAY).map {
-                when (it) {
-                    is Result.Success -> {
-                        val tasks = it.data
-                        val toDoTasks = tasks.filter { task ->
-                            task.completedSessions < task.pomodoroSessions
-                        }.map { task ->
-                            TaskScheduleUiModel(
-                                id = task.id ?: 0,
-                                name = task.name.orEmpty(),
-                                completedSessions = task.completedSessions,
-                                pomodoroSessions = task.pomodoroSessions,
-                                remainingTimeMinutes = (task.pomodoroSessions - task.completedSessions) * pomodoroDuration,
-                                isActive = (task.id ?: 0) == activeTaskId.toInt()
-                            )
-                        }
-                        UiState.Success(toDoTasks)
-                    }
-                    is Result.Error -> UiState.Error(it.message)
+    val todoTasks =
+        combine(
+            taskRepository.activeTask,
+            settingsRepository.pomodoroDuration
+        ) { activeTask, pomodoroDuration ->
+            Pair(activeTask, pomodoroDuration)
+        }
+        .flatMapLatest { (activeTask, pomodoroDuration) ->
+            taskRepository.getTasksByDay(CURRENT_DAY).map { tasks ->
+                tasks.filter { task ->
+                    task.completedSessions < task.pomodoroSessions
+                }.map { task ->
+                    TaskScheduleUiModel(
+                        id = task.id ?: 0,
+                        name = task.name.orEmpty(),
+                        completedSessions = task.completedSessions,
+                        pomodoroSessions = task.pomodoroSessions,
+                        remainingTimeMinutes = (task.pomodoroSessions - task.completedSessions) * pomodoroDuration,
+                        isActive = (task.id ?: 0) == activeTask?.id
+                    )
                 }
             }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), UiState.Loading())
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), emptyList())
 
     val doneTasks = taskRepository.getTasksByDay(CURRENT_DAY)
-        .map {
-            when (it) {
-                is Result.Success -> {
-                    val tasks = it.data
-                    val doneTasks = tasks.filter { task ->
-                        task.completedSessions == task.pomodoroSessions
-                    }.map { task ->
-                        TaskScheduleUiModel(
-                            id = task.id ?: 0,
-                            name = task.name.orEmpty(),
-                            completedSessions = task.completedSessions,
-                            pomodoroSessions = task.pomodoroSessions,
-                            remainingTimeMinutes = 0,
-                            isActive = false
-                        )
-                    }
-                    UiState.Success(doneTasks)
-                }
-                is Result.Error -> UiState.Error(it.message)
+        .map { tasks ->
+            tasks.filter { task ->
+                task.completedSessions == task.pomodoroSessions
+            }.map { task ->
+                TaskScheduleUiModel(
+                    id = task.id ?: 0,
+                    name = task.name.orEmpty(),
+                    completedSessions = task.completedSessions,
+                    pomodoroSessions = task.pomodoroSessions,
+                    remainingTimeMinutes = 0,
+                    isActive = false
+                )
             }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), UiState.Loading())
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), emptyList())
 
     fun setActiveTask(taskId: Int?) {
         viewModelScope.launch {
