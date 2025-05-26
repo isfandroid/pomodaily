@@ -8,12 +8,16 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
+import androidx.core.app.NotificationManagerCompat
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.data.model.TaskCompletionLog
 import com.isfandroid.pomodaily.data.model.TimerData
@@ -21,9 +25,12 @@ import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.feature.main.MainActivity
-import com.isfandroid.pomodaily.utils.Constant.POMODORO_CHANNEL_ID
-import com.isfandroid.pomodaily.utils.Constant.POMODORO_CHANNEL_NAME
-import com.isfandroid.pomodaily.utils.Constant.POMODORO_NOTIFICATION_ID
+import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_ID
+import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_NAME
+import com.isfandroid.pomodaily.utils.Constant.POMODORO_TIMER_CHANNEL_ID
+import com.isfandroid.pomodaily.utils.Constant.POMODORO_TIMER_CHANNEL_NAME
+import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_NOTIFICATION_ID
+import com.isfandroid.pomodaily.utils.Constant.POMODORO_TIMER_NOTIFICATION_ID
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_PAUSED
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_RUNNING
@@ -88,9 +95,9 @@ class PomodoroService: Service() {
             pomodoroRepository.timerData.collect {
                 if (it.state != TIMER_STATE_IDLE) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                        startForeground(POMODORO_NOTIFICATION_ID, createNotification(it), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+                        startForeground(POMODORO_TIMER_NOTIFICATION_ID, createNotification(it), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
                     } else {
-                        startForeground(POMODORO_NOTIFICATION_ID, createNotification(it))
+                        startForeground(POMODORO_TIMER_NOTIFICATION_ID, createNotification(it))
                     }
                 }
             }
@@ -99,7 +106,6 @@ class PomodoroService: Service() {
 
     private fun createNotification(timerData: TimerData): Notification {
         val pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-
         val notificationIntent = Intent(this, MainActivity::class.java).apply {
             action = MainActivity.ACTION_NAVIGATE_TO_POMODORO
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -153,7 +159,7 @@ class PomodoroService: Service() {
         }
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notificationBuilder = NotificationCompat.Builder(this, POMODORO_CHANNEL_ID)
+        val notificationBuilder = NotificationCompat.Builder(this, POMODORO_TIMER_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_app_logo)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setCustomContentView(notificationLayout)
@@ -168,12 +174,13 @@ class PomodoroService: Service() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                POMODORO_CHANNEL_ID,
-                POMODORO_CHANNEL_NAME,
+                POMODORO_TIMER_CHANNEL_ID,
+                POMODORO_TIMER_CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT
-            )
-            channel.description = POMODORO_CHANNEL_NAME
-            notificationBuilder.setChannelId(POMODORO_CHANNEL_ID)
+            ).apply {
+                description = POMODORO_TIMER_CHANNEL_NAME
+            }
+            notificationBuilder.setChannelId(POMODORO_TIMER_CHANNEL_ID)
             notificationManager.createNotificationChannel(channel)
         }
 
@@ -299,6 +306,11 @@ class PomodoroService: Service() {
                     stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                 }
+
+                showTimerFinishedAlertNotification(
+                    title = "Pomodoro Finished",
+                    message = "Take a Break"
+                )
             } else {
                 // Set type to pomodoro & reset timer
                 pomodoroRepository.setTimerType(TIMER_TYPE_POMODORO)
@@ -331,7 +343,69 @@ class PomodoroService: Service() {
                     stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                 }
+
+                showTimerFinishedAlertNotification(
+                    title = "Break Finished",
+                    message = "Back to Focus"
+                )
             }
+        }
+    }
+
+    private fun showTimerFinishedAlertNotification(title: String, message: String) {
+        val pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val notificationIntent = Intent(this, MainActivity::class.java).apply {
+            action = MainActivity.ACTION_NAVIGATE_TO_POMODORO
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            notificationIntent,
+            pendingIntentFlags
+        )
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationBuilder = NotificationCompat.Builder(this, POMODORO_ALERT_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_app_logo)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            val audioAttributes = AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .build()
+            val mVibrationPattern = longArrayOf(0, 500, 200, 500)
+
+            val channel = NotificationChannel(
+                POMODORO_ALERT_CHANNEL_ID,
+                POMODORO_ALERT_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = POMODORO_ALERT_CHANNEL_NAME
+                setSound(soundUri, audioAttributes)
+                enableVibration(true)
+                vibrationPattern = mVibrationPattern
+            }
+            notificationBuilder.setChannelId(POMODORO_ALERT_CHANNEL_ID)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        try {
+            NotificationManagerCompat.from(this).notify(POMODORO_ALERT_NOTIFICATION_ID, notificationBuilder.build())
+        } catch (e: SecurityException) {
+            Log.e("PomodoroApp", "Permission issue showing alert notification.", e)
+        }
+
+        serviceScope.launch {
+            delay(5000)
+            NotificationManagerCompat.from(this@PomodoroService).cancel(POMODORO_ALERT_NOTIFICATION_ID)
         }
     }
 
