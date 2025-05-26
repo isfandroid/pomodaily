@@ -11,7 +11,9 @@ import android.content.pm.ServiceInfo
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
@@ -403,10 +405,9 @@ class PomodoroService: Service() {
             Log.e("PomodoroApp", "Permission issue showing alert notification.", e)
         }
 
-        serviceScope.launch {
-            delay(5000)
-            NotificationManagerCompat.from(this@PomodoroService).cancel(POMODORO_ALERT_NOTIFICATION_ID)
-        }
+        Handler(Looper.getMainLooper()).postDelayed(
+            { NotificationManagerCompat.from(this).cancel(POMODORO_ALERT_NOTIFICATION_ID)
+            }, 5000)
     }
 
     companion object {
