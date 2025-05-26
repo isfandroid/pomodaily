@@ -105,4 +105,8 @@
     <string name="txt_value_stats_last_month">Last Month: %s</string>
     <string name="txt_value_task_sessions">%d / %d Pomodoro</string>
     <string name="txt_value_no_tasks_for_day">No tasks for %s.</string>
+    <string name="txt_grant_permission">Grant Permission</string>
+    <string name="txt_msg_enable_notification">Enable Notifications for Better Focus</string>
+    <string name="txt_msg_enable_notification_desc">Notifications alert you when Pomodoro sessions start or end to help you stay focused.</string>
+    <string name="txt_okay">Okay</string>
 </resources>

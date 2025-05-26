@@ -1,6 +1,8 @@
 package com.isfandroid.pomodaily.presentation.feature.main
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -116,6 +118,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+}
+
+fun Activity.openAppSettings() {
+    Intent(
+        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).also(::startActivity)
 }
 
 // SCREENS

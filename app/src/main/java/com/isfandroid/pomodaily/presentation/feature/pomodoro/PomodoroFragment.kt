@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,11 +24,11 @@ import com.isfandroid.pomodaily.presentation.feature.main.Schedule
 import com.isfandroid.pomodaily.presentation.feature.main.Settings
 import com.isfandroid.pomodaily.presentation.feature.main.Statistics
 import com.isfandroid.pomodaily.presentation.feature.main.Tasks
+import com.isfandroid.pomodaily.presentation.feature.main.openAppSettings
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_PAUSED
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_RUNNING
 import com.isfandroid.pomodaily.utils.Constant.TIMER_TYPE_POMODORO
-import com.isfandroid.pomodaily.utils.Helper.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,14 +41,10 @@ class PomodoroFragment: Fragment() {
 
     private val viewModel by viewModels<PomodoroViewModel>()
 
-    private val requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (!isGranted) {
-            showSnackbar(
-                view = binding.root,
-                message = getString(R.string.txt_msg_no_timer_notification_from_app),
-                isError = true
-            )
-        }
+    private val requestPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        binding.layoutMessage.root.isVisible = !isGranted
     }
 
     override fun onCreateView(
@@ -60,8 +58,22 @@ class PomodoroFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
         initViews()
         observeData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkNotificationPermission()
+        }
     }
 
     override fun onDestroyView() {
@@ -71,11 +83,13 @@ class PomodoroFragment: Fragment() {
 
     private fun initViews() {
         with(binding) {
-            // Notification Permission
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
+            // Notification Permission Message
+            layoutMessage.apply {
+                ivIllustration.setImageResource(R.drawable.img_illustration_notification)
+                tvTitle.text = getString(R.string.txt_msg_enable_notification)
+                tvDesc.text = getString(R.string.txt_msg_enable_notification_desc)
+                btnSecondaryAction.visibility = View.GONE
+                btnAction.text = getString(R.string.txt_grant_permission)
             }
 
             // Menu
@@ -231,6 +245,26 @@ class PomodoroFragment: Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkNotificationPermission() {
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+        val isGranted = ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED
+        val isPermanentlyDeclined = !shouldShowRequestPermissionRationale(permission)
+
+        if (!isGranted) {
+            binding.layoutMessage.root.visibility = View.VISIBLE
+            binding.layoutMessage.btnAction.setOnClickListener {
+                if (isPermanentlyDeclined) {
+                    requireActivity().openAppSettings()
+                } else {
+                    requestPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        } else {
+            binding.layoutMessage.root.visibility = View.GONE
         }
     }
 }
