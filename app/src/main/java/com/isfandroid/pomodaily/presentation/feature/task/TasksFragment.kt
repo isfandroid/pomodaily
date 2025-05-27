@@ -163,7 +163,7 @@ class TasksFragment: Fragment() {
 
                 launch {
                     viewModel.daysWithTasks.collectLatest { daysWithTasks ->
-                        if (daysWithTasks.isNotEmpty() && viewModel.tasks.value.isEmpty()) {
+                        if (daysWithTasks.isNotEmpty()) {
                             binding.layoutError.btnSecondaryAction.visibility = View.VISIBLE
                             binding.layoutError.btnSecondaryAction.text = getString(R.string.txt_copy_tasks)
                             binding.layoutError.btnSecondaryAction.setOnClickListener {

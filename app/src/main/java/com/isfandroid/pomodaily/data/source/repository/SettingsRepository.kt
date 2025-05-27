@@ -53,9 +53,4 @@ class SettingsRepository @Inject constructor(
     suspend fun setAutoStartPomodoros(value: Boolean) {
         localDataSource.setAutoStartPomodoros(value)
     }
-
-    val appTheme = localDataSource.appTheme
-    suspend fun setAppTheme(value: String) {
-        localDataSource.setAppTheme(value)
-    }
 }

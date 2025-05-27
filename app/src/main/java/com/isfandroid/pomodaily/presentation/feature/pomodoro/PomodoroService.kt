@@ -26,7 +26,7 @@ import com.isfandroid.pomodaily.data.model.TimerData
 import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
-import com.isfandroid.pomodaily.presentation.feature.main.MainActivity
+import com.isfandroid.pomodaily.presentation.feature.MainActivity
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_ID
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_NAME
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_TIMER_CHANNEL_ID

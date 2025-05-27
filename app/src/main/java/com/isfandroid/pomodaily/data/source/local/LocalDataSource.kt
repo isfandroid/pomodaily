@@ -6,11 +6,9 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.isfandroid.pomodaily.data.source.local.database.AppDao
 import com.isfandroid.pomodaily.data.source.local.model.TaskCompletionLogEntity
 import com.isfandroid.pomodaily.data.source.local.model.TaskEntity
-import com.isfandroid.pomodaily.utils.Constant.APP_THEME_LIGHT
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_BREAKS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_POMODOROS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_BREAK_MINUTES
@@ -19,7 +17,6 @@ import com.isfandroid.pomodaily.utils.Constant.DEFAULT_LONG_BREAK_MINUTES
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_POMODORO_COUNT
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_POMODORO_MINUTES
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_ACTIVE_TASK_ID
-import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_APP_THEME
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_BREAK_DURATION
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_IS_ON_BOARDING_DONE
 import com.isfandroid.pomodaily.utils.Constant.PREFS_KEY_LAST_RESET_DATE
@@ -162,19 +159,6 @@ class LocalDataSource @Inject constructor(
         prefs[longPreferencesKey(PREFS_KEY_ACTIVE_TASK_ID)] ?: 0L
     }
     /** endregion APP PREFS - Task **/
-
-    /** region APP PREFS - General **/
-    suspend fun setAppTheme(value: String) {
-        withContext(Dispatchers.IO) {
-            dataStore.edit { prefs ->
-                prefs[stringPreferencesKey(PREFS_KEY_APP_THEME)] = value
-            }
-        }
-    }
-    val appTheme: Flow<String> = dataStore.data.map { prefs ->
-        prefs[stringPreferencesKey(PREFS_KEY_APP_THEME)] ?: APP_THEME_LIGHT
-    }
-    /** endregion APP PREFS - General **/
 
     /** region DB - TASK **/
     fun getTasksByDay(dayId: Int) = appDao.getTasksByDay(dayId)

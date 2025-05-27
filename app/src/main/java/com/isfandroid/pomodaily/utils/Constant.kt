@@ -13,7 +13,6 @@ object Constant {
     const val PREFS_KEY_SETTINGS_AUTO_START_POMODOROS = "PREFS_KEY_SETTINGS_AUTO_START_POMODOROS"
     const val PREFS_KEY_LAST_RESET_DATE = "PREFS_KEY_LAST_RESET_DATE"
     const val PREFS_KEY_ACTIVE_TASK_ID = "PREFS_KEY_ACTIVE_TASK_ID"
-    const val PREFS_KEY_APP_THEME = "PREFS_KEY_APP_THEME"
 
     // DATA - LOCAL - PREFS - VALUES
     const val DEFAULT_POMODORO_MINUTES = 25
@@ -23,8 +22,6 @@ object Constant {
     const val DEFAULT_POMODORO_COUNT = 0
     const val DEFAULT_AUTO_START_POMODOROS = true
     const val DEFAULT_AUTO_START_BREAKS = true
-    const val APP_THEME_DARK = "APP_THEME_DARK"
-    const val APP_THEME_LIGHT = "APP_THEME_LIGHT"
 
     // DATA - LOCAL - DATABASE
     const val DB_NAME = "pomodaily.db"

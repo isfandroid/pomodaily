@@ -1,6 +1,7 @@
 package com.isfandroid.pomodaily
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.isfandroid.pomodaily.workers.WorkerScheduler
@@ -21,6 +22,7 @@ class BaseApplication: Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         WorkerScheduler.scheduleDailyResetWorker(this)
     }
 }

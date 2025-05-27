@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
-import com.isfandroid.pomodaily.utils.Constant.APP_THEME_LIGHT
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_BREAKS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_POMODOROS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_BREAK_MINUTES
@@ -64,13 +63,5 @@ class SettingsViewModel @Inject constructor(
     }
     fun setAutoStartPomodoros(value: Boolean) {
         viewModelScope.launch { settingsRepository.setAutoStartPomodoros(value) }
-    }
-
-    // General
-    val appTheme = settingsRepository.appTheme
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), APP_THEME_LIGHT)
-
-    fun setAppTheme(value: String) {
-        viewModelScope.launch { settingsRepository.setAppTheme(value) }
     }
 }

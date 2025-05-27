@@ -84,24 +84,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
-
-            <!--GENERAL-->
-            <TextView
-                android:id="@+id/tv_title_general"
-                style="@style/Text.Regular.14"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/txt_general"
-                />
-            <include
-                android:id="@+id/item_settings_app_theme"
-                layout="@layout/item_settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                />
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

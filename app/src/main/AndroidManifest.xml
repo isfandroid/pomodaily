@@ -20,7 +20,7 @@
         >
 
         <activity
-            android:name=".presentation.feature.main.MainActivity"
+            android:name=".presentation.feature.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
             >

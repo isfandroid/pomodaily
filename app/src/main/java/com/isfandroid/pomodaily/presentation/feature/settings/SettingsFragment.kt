@@ -12,8 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentSettingsBinding
-import com.isfandroid.pomodaily.utils.Constant.APP_THEME_DARK
-import com.isfandroid.pomodaily.utils.Constant.APP_THEME_LIGHT
 import com.isfandroid.pomodaily.utils.Helper.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -141,39 +139,6 @@ class SettingsFragment: Fragment() {
             itemSettingsAutoStartBreaks.switchValue.setOnClickListener {
                 viewModel.setAutoStartBreaks(!viewModel.autoStartBreaks.value)
             }
-            
-            // Settings - General
-            itemSettingsAppTheme.tvTitle.text = getString(R.string.txt_app_theme)
-            itemSettingsAppTheme.tvValue.visibility = View.VISIBLE
-            itemSettingsAppTheme.root.setOnClickListener {
-                showUpdateBottomSheet(
-                    title = getString(R.string.txt_app_theme),
-                    formTitle = getString(R.string.txt_mode),
-                    isMultipleChoices = true,
-                    multipleChoicesValue = if (viewModel.appTheme.value == APP_THEME_LIGHT) {
-                        getString(R.string.txt_light_mode)
-                    } else {
-                        getString(R.string.txt_dark_mode)
-                    },
-                    multipleChoicesItems = arrayOf(
-                        getString(R.string.txt_light_mode),
-                        getString(R.string.txt_dark_mode)
-                    ),
-                    onSubmit = {
-                        val selectedTheme = it as String
-                        if (selectedTheme == getString(R.string.txt_light_mode)) {
-                            viewModel.setAppTheme(APP_THEME_LIGHT)
-                        } else {
-                            viewModel.setAppTheme(APP_THEME_DARK)
-                        }
-                        showSnackbar(
-                            view = binding.root,
-                            message = getString(R.string.txt_msg_settings_updated),
-                            isError = false
-                        )
-                    }
-                )
-            }
         }
     }
 
@@ -209,17 +174,6 @@ class SettingsFragment: Fragment() {
                 launch {
                     viewModel.autoStartBreaks.collectLatest {
                         binding.itemSettingsAutoStartBreaks.switchValue.isChecked = it
-                    }
-                }
-                
-                // Settings - General
-                launch {
-                    viewModel.appTheme.collectLatest {
-                        binding.itemSettingsAppTheme.tvValue.text = if (it == APP_THEME_LIGHT) {
-                            getString(R.string.txt_light_mode)
-                        } else {
-                            getString(R.string.txt_dark_mode)
-                        }
                     }
                 }
             }

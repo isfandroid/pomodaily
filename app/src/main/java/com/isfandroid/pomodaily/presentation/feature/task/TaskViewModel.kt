@@ -58,8 +58,7 @@ class TaskViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    val daysWithTasks = tasks
-        .flatMapLatest { taskRepository.daysWithTasks }
+    val daysWithTasks = taskRepository.daysWithTasks
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS),
