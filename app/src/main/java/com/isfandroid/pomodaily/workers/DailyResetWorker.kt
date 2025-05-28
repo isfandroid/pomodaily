@@ -6,11 +6,11 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
+import com.isfandroid.pomodaily.utils.DateUtils
 import com.isfandroid.pomodaily.utils.DateUtils.CURRENT_DAY
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
-import java.util.Calendar
 
 @HiltWorker
 class DailyResetWorker @AssistedInject constructor (
@@ -21,24 +21,25 @@ class DailyResetWorker @AssistedInject constructor (
 ): CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        val dateNowMillis = Calendar.getInstance().timeInMillis
-        val lastResetDate = settingsRepository.lastResetDate.first()
+        val todayStartMillis = DateUtils.getTodayStartMillis()
+        val lastResetStartMillis = settingsRepository.lastResetDate.first()
 
-        if (lastResetDate == dateNowMillis) {
+        if (lastResetStartMillis == todayStartMillis) {
             return Result.success()
         }
 
+        val lastMonthStartMillis = DateUtils.getLastMonthStartMillis()
         val resetResult = taskRepository.resetTasksCompletedSessionsForDay(CURRENT_DAY).first()
-        if (resetResult !is com.isfandroid.pomodaily.data.resource.Result.Success) {
+        val deleteResult = taskRepository.deleteTaskCompletionLogsOlderThan(lastMonthStartMillis).first()
+
+        if (
+            resetResult !is com.isfandroid.pomodaily.data.resource.Result.Success ||
+            deleteResult !is com.isfandroid.pomodaily.data.resource.Result.Success
+        ) {
             return Result.failure()
         }
 
-        if (taskRepository.getUncompletedTaskByDay(CURRENT_DAY).first() == null) {
-            return Result.failure()
-        }
-
-        settingsRepository.setLastResetDate(dateNowMillis)
-
+        settingsRepository.setLastResetDate(todayStartMillis)
         return Result.success()
     }
 }

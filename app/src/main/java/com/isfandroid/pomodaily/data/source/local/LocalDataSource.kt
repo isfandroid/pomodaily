@@ -166,12 +166,13 @@ class LocalDataSource @Inject constructor(
     fun getUncompletedTaskByDay(dayId: Int) = appDao.getUncompletedTaskByDay(dayId)
     fun getDaysWithTasks() = appDao.getDaysWithTasks()
     fun getTotalTasksByDay(dayId: Int) = appDao.getTotalTasksByDay(dayId)
-    fun getTotalCompletedTasksBetween(startTimeMillis: Long, endTimeMillis: Long) = appDao.getTotalCompletedTasksBetween(startTimeMillis, endTimeMillis)
+    fun getTotalCompletedTasksBetween(startTimeMillis: Long, endTimeMillis: Long) = appDao.getTotalLogsBetween(startTimeMillis, endTimeMillis)
     suspend fun resetTaskCompletedSessionsForDay(dayId: Int) = appDao.resetTasksCompletedSessionsForDay(dayId)
     suspend fun upsertTask(task: TaskEntity) = appDao.upsertTask(task)
     suspend fun upsertTasks(tasks: List<TaskEntity>) = appDao.upsertTasks(tasks)
     suspend fun deleteTask(task: TaskEntity) = appDao.deleteTask(task)
-    suspend fun insertTaskCompletionLog(log: TaskCompletionLogEntity) = appDao.insertTaskCompletionLog(log)
-    suspend fun deleteTaskCompletionLogsByTaskId(taskId: Long) = appDao.deleteTaskCompletionLogsByTaskId(taskId)
+    suspend fun insertTaskCompletionLog(log: TaskCompletionLogEntity) = appDao.insertLog(log)
+    suspend fun deleteTaskCompletionLogsByTaskId(taskId: Long) = appDao.deleteLogsByTaskId(taskId)
+    suspend fun deleteTaskCompletionLogsOlderThan(cutoffTimestampMillis: Long) = appDao.deleteLogsOlderThan(cutoffTimestampMillis)
     /** endregion DB - TASK **/
 }

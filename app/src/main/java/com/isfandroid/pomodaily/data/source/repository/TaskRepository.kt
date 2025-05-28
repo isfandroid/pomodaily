@@ -154,5 +154,14 @@ class TaskRepository @Inject constructor(
             emit(Result.Error(e.message ?: "Unknown error occurred: Insert Task Completion Log"))
         }
     }.flowOn(Dispatchers.IO)
+
+    fun deleteTaskCompletionLogsOlderThan(timestampMillis: Long): Flow<Result<Unit>> = flow {
+        try {
+            localDataSource.deleteTaskCompletionLogsOlderThan(timestampMillis)
+            emit(Result.Success(Unit))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error occurred: Delete Older Logs"))
+        }
+    }.flowOn(Dispatchers.IO)
     /** endregion ACTIONS **/
 }

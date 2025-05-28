@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AppDao {
 
+    /** region TASK **/
     @Query("SELECT * FROM tasks WHERE dayOfWeek = :dayId ORDER BY `order` ASC")
     fun getTasksByDay(dayId: Int): Flow<List<TaskEntity>>
 
@@ -23,9 +24,6 @@ interface AppDao {
 
     @Query("SELECT DISTINCT dayOfWeek FROM tasks")
     fun getDaysWithTasks(): Flow<List<Int>>
-
-    @Query("SELECT COUNT(*) FROM task_completion_logs WHERE completionDate >= :startTimeMillis AND completionDate <= :endTimeMillis")
-    fun getTotalCompletedTasksBetween(startTimeMillis: Long, endTimeMillis: Long): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM tasks WHERE dayOfWeek = :dayId")
     fun getTotalTasksByDay(dayId: Int): Flow<Int>
@@ -41,10 +39,19 @@ interface AppDao {
 
     @Delete
     suspend fun deleteTask(task: TaskEntity)
+    /** endregion TASK **/
+
+    /** region LOG **/
+    @Query("SELECT COUNT(*) FROM task_completion_logs WHERE completionDate >= :startTimeMillis AND completionDate <= :endTimeMillis")
+    fun getTotalLogsBetween(startTimeMillis: Long, endTimeMillis: Long): Flow<Int>
 
     @Insert
-    suspend fun insertTaskCompletionLog(completionLog: TaskCompletionLogEntity)
+    suspend fun insertLog(completionLog: TaskCompletionLogEntity)
 
     @Query("DELETE FROM task_completion_logs WHERE taskId = :taskId")
-    suspend fun deleteTaskCompletionLogsByTaskId(taskId: Long)
+    suspend fun deleteLogsByTaskId(taskId: Long)
+
+    @Query("DELETE FROM task_completion_logs WHERE completionDate < :cutoffTimestampMillis")
+    suspend fun deleteLogsOlderThan(cutoffTimestampMillis: Long)
+    /** endregion LOG **/
 }
