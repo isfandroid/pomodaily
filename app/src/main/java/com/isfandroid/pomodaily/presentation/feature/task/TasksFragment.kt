@@ -130,32 +130,31 @@ class TasksFragment: Fragment() {
                                 binding.svDays.smoothScrollTo(scrollX, 0)
                             }
                         }
+
+                        val dayName = DAYS_OF_WEEK.first { day -> day["id"] == viewModel.selectedDayId.value }["name"] as String
+                        binding.layoutError.tvDesc.text = getString(R.string.txt_value_no_tasks_for_day, dayName)
                     }
                 }
 
                 launch {
                     viewModel.tasks.collectLatest {
                         with(binding) {
+                            taskAdapter.submitList(it)
+
                             if (it.isEmpty()) {
-                                rvItems.isVisible = false
                                 layoutError.root.isVisible = true
                                 btnAdd.visibility = View.GONE
 
-                                val dayName = DAYS_OF_WEEK.first { day -> day["id"] == viewModel.selectedDayId.value }["name"] as String
                                 layoutError.ivIllustration.setImageResource(R.drawable.img_illustration_empty)
                                 layoutError.tvTitle.text = getString(R.string.txt_empty_data)
-                                layoutError.tvDesc.text = getString(R.string.txt_value_no_tasks_for_day, dayName)
                                 layoutError.btnAction.text = getString(R.string.txt_add_task)
                                 layoutError.btnAction.setOnClickListener {
                                     viewModel.addNewTaskEntry()
                                 }
                             }
                             else {
-                                rvItems.isVisible = true
                                 layoutError.root.isVisible = false
                                 btnAdd.isVisible = !it.any { it.isNewEntry || it.isExpanded }
-
-                                taskAdapter.submitList(it)
                             }
                         }
                     }
