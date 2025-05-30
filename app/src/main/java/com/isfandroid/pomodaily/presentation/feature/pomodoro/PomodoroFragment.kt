@@ -20,11 +20,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.FragmentPomodoroBinding
-import com.isfandroid.pomodaily.presentation.feature.Schedule
-import com.isfandroid.pomodaily.presentation.feature.Settings
-import com.isfandroid.pomodaily.presentation.feature.Statistics
-import com.isfandroid.pomodaily.presentation.feature.Tasks
-import com.isfandroid.pomodaily.presentation.feature.openAppSettings
+import com.isfandroid.pomodaily.presentation.feature.main.Schedule
+import com.isfandroid.pomodaily.presentation.feature.main.Settings
+import com.isfandroid.pomodaily.presentation.feature.main.Statistics
+import com.isfandroid.pomodaily.presentation.feature.main.Tasks
+import com.isfandroid.pomodaily.presentation.feature.main.openAppSettings
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_PAUSED
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_RUNNING

@@ -1,4 +1,4 @@
-package com.isfandroid.pomodaily.presentation.feature
+package com.isfandroid.pomodaily.presentation.feature.main
 
 import android.app.Activity
 import android.content.Intent
@@ -16,7 +16,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.fragment
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.databinding.ActivityMainBinding
-import com.isfandroid.pomodaily.presentation.MainViewModel
 import com.isfandroid.pomodaily.presentation.feature.onboarding.OnBoardingContainerFragment
 import com.isfandroid.pomodaily.presentation.feature.pomodoro.PomodoroFragment
 import com.isfandroid.pomodaily.presentation.feature.schedule.ScheduleFragment
@@ -51,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.navDestination.collectLatest {
-                    println("COLLECTED")
                     when (it) {
                         NAV_DESTINATION_POMODORO -> setupNavGraph(Pomodoro)
                         NAV_DESTINATION_ON_BOARDING -> setupNavGraph(OnBoarding)

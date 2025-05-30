@@ -1,4 +1,4 @@
-package com.isfandroid.pomodaily.presentation
+package com.isfandroid.pomodaily.presentation.feature.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -26,7 +26,7 @@ import com.isfandroid.pomodaily.data.model.TimerData
 import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
 import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
 import com.isfandroid.pomodaily.data.source.repository.TaskRepository
-import com.isfandroid.pomodaily.presentation.feature.MainActivity
+import com.isfandroid.pomodaily.presentation.feature.main.MainActivity
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_ID
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_NAME
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_TIMER_CHANNEL_ID
@@ -402,7 +402,7 @@ class PomodoroService: Service() {
         try {
             NotificationManagerCompat.from(this).notify(POMODORO_ALERT_NOTIFICATION_ID, notificationBuilder.build())
         } catch (e: SecurityException) {
-            Log.e("PomodoroApp", "Permission issue showing alert notification.", e)
+            Log.e("PomodoroService", "Permission issue showing alert notification.", e)
         }
 
         Handler(Looper.getMainLooper()).postDelayed(
