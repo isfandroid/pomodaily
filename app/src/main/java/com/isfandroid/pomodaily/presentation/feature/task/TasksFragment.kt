@@ -140,20 +140,17 @@ class TasksFragment: Fragment() {
                     viewModel.tasks.collectLatest {
                         with(binding) {
                             taskAdapter.submitList(it)
-
                             if (it.isEmpty()) {
-                                layoutError.root.isVisible = true
-                                btnAdd.visibility = View.GONE
-
+                                layoutError.root.visibility = View.VISIBLE
                                 layoutError.ivIllustration.setImageResource(R.drawable.img_illustration_empty)
                                 layoutError.tvTitle.text = getString(R.string.txt_empty_data)
                                 layoutError.btnAction.text = getString(R.string.txt_add_task)
                                 layoutError.btnAction.setOnClickListener {
                                     viewModel.addNewTaskEntry()
                                 }
-                            }
-                            else {
-                                layoutError.root.isVisible = false
+                                btnAdd.visibility = View.GONE
+                            } else {
+                                layoutError.root.visibility = View.GONE
                                 btnAdd.isVisible = !it.any { it.isNewEntry || it.isExpanded }
                             }
                         }
@@ -185,7 +182,6 @@ class TasksFragment: Fragment() {
                                     isError = true
                                 )
                             }
-
                             is Result.Success -> {
                                 showSnackbar(
                                     view = binding.root,
@@ -207,7 +203,6 @@ class TasksFragment: Fragment() {
                                     isError = true
                                 )
                             }
-
                             is Result.Success -> {
                                 showSnackbar(
                                     view = binding.root,
@@ -229,7 +224,6 @@ class TasksFragment: Fragment() {
                                     isError = true
                                 )
                             }
-
                             is Result.Success -> {
                                 showSnackbar(
                                     view = binding.root,
