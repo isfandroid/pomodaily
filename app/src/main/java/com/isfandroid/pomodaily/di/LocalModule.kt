@@ -5,9 +5,16 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.room.Room
-import com.isfandroid.pomodaily.data.source.local.database.AppDao
-import com.isfandroid.pomodaily.data.source.local.database.AppDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import com.isfandroid.pomodaily.AppDatabase
+import com.isfandroid.pomodaily.data.source.local.general.GeneralLocalDataSource
+import com.isfandroid.pomodaily.data.source.local.general.GeneralLocalDataSourceImpl
+import com.isfandroid.pomodaily.data.source.local.pomodoro.PomodoroLocalDataSource
+import com.isfandroid.pomodaily.data.source.local.pomodoro.PomodoroLocalDataSourceImpl
+import com.isfandroid.pomodaily.data.source.local.task.TaskLocalDataSource
+import com.isfandroid.pomodaily.data.source.local.task.TaskLocalDataSourceImpl
 import com.isfandroid.pomodaily.utils.Constant.APP_PREFS
 import com.isfandroid.pomodaily.utils.Constant.DB_NAME
 import dagger.Module
@@ -17,9 +24,24 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@InstallIn(SingletonComponent::class)
 @Module
-class LocalModule {
+@InstallIn(SingletonComponent::class)
+object LocalModule {
+
+    @Provides
+    @Singleton
+    fun provideSqlDriver(@ApplicationContext appContext: Context): SqlDriver {
+        return AndroidSqliteDriver(
+            schema = AppDatabase.Schema,
+            context = appContext,
+            name = DB_NAME,
+            callback = object : AndroidSqliteDriver.Callback(AppDatabase.Schema) {
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    db.setForeignKeyConstraintsEnabled(true)
+                }
+            }
+        )
+    }
 
     @Provides
     @Singleton
@@ -29,15 +51,24 @@ class LocalModule {
         )
     }
 
-    @Singleton
     @Provides
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase = Room.databaseBuilder(
-        context,
-        AppDatabase::class.java,
-        DB_NAME
-    ).fallbackToDestructiveMigration(false).build()
+    @Singleton
+    fun provideGeneralDataSource(dataStore: DataStore<Preferences>): GeneralLocalDataSource {
+        return GeneralLocalDataSourceImpl(dataStore)
+    }
 
     @Provides
     @Singleton
-    fun provideAppDao(database: AppDatabase): AppDao = database.appDao()
+    fun providePomodoroDataSource(dataStore: DataStore<Preferences>): PomodoroLocalDataSource {
+        return PomodoroLocalDataSourceImpl(dataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTaskDataSource(dataStore: DataStore<Preferences>, driver: SqlDriver): TaskLocalDataSource {
+        return TaskLocalDataSourceImpl(
+            dataStore,
+            AppDatabase(driver)
+        )
+    }
 }

@@ -23,9 +23,8 @@ import androidx.core.app.NotificationManagerCompat
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.data.model.TaskCompletionLog
 import com.isfandroid.pomodaily.data.model.TimerData
-import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
-import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
-import com.isfandroid.pomodaily.data.source.repository.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.pomodoro.PomodoroRepository
+import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
 import com.isfandroid.pomodaily.presentation.feature.main.MainActivity
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_ID
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_NAME
@@ -47,7 +46,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -57,7 +55,6 @@ import javax.inject.Inject
 class PomodoroService: Service() {
 
     @Inject lateinit var pomodoroRepository: PomodoroRepository
-    @Inject lateinit var settingsRepository: SettingsRepository
     @Inject lateinit var taskRepository: TaskRepository
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -94,7 +91,7 @@ class PomodoroService: Service() {
     private fun initObserver() {
         stateObserverJob?.cancel()
         stateObserverJob = serviceScope.launch {
-            pomodoroRepository.timerData.collect {
+            pomodoroRepository.getTimerData().collect {
                 if (it.state != TIMER_STATE_IDLE) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                         startForeground(POMODORO_TIMER_NOTIFICATION_ID, createNotification(it), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
@@ -205,7 +202,7 @@ class PomodoroService: Service() {
 
     private fun startTimer() {
         serviceScope.launch {
-            val timerData = pomodoroRepository.timerData.first()
+            val timerData = pomodoroRepository.getTimerData().first()
             if (timerData.state == TIMER_STATE_IDLE) {
                 if (timerData.remainingTime <= 0) pomodoroRepository.resetTimerForCurrentType() else startCountdown()
             }
@@ -214,7 +211,7 @@ class PomodoroService: Service() {
 
     private fun pauseTimer() {
         serviceScope.launch {
-            val timerData = pomodoroRepository.timerData.first()
+            val timerData = pomodoroRepository.getTimerData().first()
             if (timerData.state == TIMER_STATE_RUNNING) {
                 timerJob?.cancel()
                 pomodoroRepository.setTimerState(TIMER_STATE_PAUSED)
@@ -224,14 +221,14 @@ class PomodoroService: Service() {
 
     private fun resumeTimer() {
         serviceScope.launch {
-            val timerData = pomodoroRepository.timerData.first()
+            val timerData = pomodoroRepository.getTimerData().first()
             if (timerData.state == TIMER_STATE_PAUSED) startCountdown()
         }
     }
 
     private fun restartTimer() {
         serviceScope.launch {
-            val timerData = pomodoroRepository.timerData.first()
+            val timerData = pomodoroRepository.getTimerData().first()
             if (timerData.state != TIMER_STATE_IDLE) {
                 timerJob?.cancel()
                 stateObserverJob?.cancel()
@@ -247,7 +244,7 @@ class PomodoroService: Service() {
 
     private fun finishTimer() {
         serviceScope.launch {
-            val timerData = pomodoroRepository.timerData.first()
+            val timerData = pomodoroRepository.getTimerData().first()
             if (timerData.state != TIMER_STATE_IDLE) {
                 timerJob?.cancel()
                 moveToNextTimer()
@@ -260,7 +257,7 @@ class PomodoroService: Service() {
         pomodoroRepository.setTimerState(TIMER_STATE_RUNNING)
 
         timerJob = serviceScope.launch {
-            var remainingTime = pomodoroRepository.timerData.first().remainingTime
+            var remainingTime = pomodoroRepository.getTimerData().first().remainingTime
             while(remainingTime != 0) {
                 delay(1000)
                 remainingTime--
@@ -272,24 +269,24 @@ class PomodoroService: Service() {
 
     private fun moveToNextTimer() {
         serviceScope.launch {
-            val timerType = pomodoroRepository.timerData.first().type
-            val pomodoroCount = settingsRepository.pomodoroCount.first()
-            val longBreakInterval = settingsRepository.longBreakInterval.first()
-            val autoStartPomodoros = settingsRepository.autoStartPomodoros.first()
-            val autoStartBreaks = settingsRepository.autoStartBreaks.first()
-            val activeTask = taskRepository.activeTask.first()
+            val timerType = pomodoroRepository.getTimerData().first().type
+            val pomodoroCount = pomodoroRepository.getPomodoroCount().first()
+            val longBreakInterval = pomodoroRepository.getLongBreakInterval().first()
+            val autoStartPomodoros = pomodoroRepository.getAutoStartPomodoros().first()
+            val autoStartBreaks = pomodoroRepository.getAutoStartBreaks().first()
+            val activeTask = taskRepository.getActiveTask().first()
             val uncompletedTask = taskRepository.getUncompletedTaskByDay(CURRENT_DAY).first()
 
             if (timerType == TIMER_TYPE_POMODORO) {
                 // Increment pomodoro count by 1
-                settingsRepository.setPomodoroCount(pomodoroCount + 1)
+                pomodoroRepository.setPomodoroCount(pomodoroCount + 1)
 
                 // Increment Active Task (if any) completed sessions
                 if (activeTask != null) {
                     val updatedTask = activeTask.copy(
                         completedSessions = activeTask.completedSessions + 1
                     )
-                    taskRepository.upsertTask(updatedTask).collect()
+                    taskRepository.updateTask(updatedTask)
                 }
 
                 // Set next break type & timer
@@ -326,14 +323,14 @@ class PomodoroService: Service() {
                                 taskId = (activeTask.id ?: 0).toLong(),
                                 completionDate = Calendar.getInstance().timeInMillis
                             )
-                        ).collect()
+                        )
                     }
 
                     // Set next active task (if theres any uncompleted session)
                     if (uncompletedTask != null) {
-                        taskRepository.setActiveTask((uncompletedTask.id ?: 0).toLong()).collect()
+                        taskRepository.updateActiveTaskId(uncompletedTask.id ?: 0)
                     } else {
-                        taskRepository.setActiveTask(null).collect()
+                        taskRepository.updateActiveTaskId(0)
                     }
                 }
 

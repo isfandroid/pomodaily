@@ -2,8 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.task
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.resource.Result
-import com.isfandroid.pomodaily.data.source.repository.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.ExpandableTaskUiModel
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.DataMapper.mapDomainTaskToExpandableTaskUiModel
@@ -58,20 +57,20 @@ class TaskViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    val daysWithTasks = taskRepository.daysWithTasks
+    val daysWithTasks = taskRepository.getDaysWithTasks()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS),
             initialValue = emptyList()
         )
 
-    private val _updateTaskResult = MutableSharedFlow<Result<Unit>>()
+    private val _updateTaskResult = MutableSharedFlow<Boolean>()
     val updateTaskResult =_updateTaskResult.asSharedFlow()
 
-    private val _deleteTaskResult = MutableSharedFlow<Result<Unit>>()
+    private val _deleteTaskResult = MutableSharedFlow<Boolean>()
     val deleteTaskResult =_deleteTaskResult.asSharedFlow()
 
-    private val _copyTasksResult = MutableSharedFlow<Result<Unit>>()
+    private val _copyTasksResult = MutableSharedFlow<Boolean>()
     val copyTasksResult =_copyTasksResult.asSharedFlow()
 
     fun selectDay(dayId: Int) {
@@ -101,38 +100,34 @@ class TaskViewModel @Inject constructor(
         _expandedTaskId.value = taskId
     }
 
+    fun insertTask(task: ExpandableTaskUiModel) {
+        viewModelScope.launch {
+            val domainTask = mapExpandableTaskUiModelToDomain(task)
+            taskRepository.insertTask(domainTask)
+            _updateTaskResult.emit(true)
+        }
+    }
+
     fun updateTask(task: ExpandableTaskUiModel) {
         viewModelScope.launch {
             val domainTask = mapExpandableTaskUiModelToDomain(task)
-            taskRepository.upsertTask(domainTask).collect {
-                when(it) {
-                    is Result.Success -> _updateTaskResult.emit(Result.Success(Unit))
-                    is Result.Error -> _updateTaskResult.emit(Result.Error(it.message))
-                }
-            }
+            taskRepository.updateTask(domainTask)
+            _updateTaskResult.emit(true)
         }
     }
 
     fun deleteTask(task: ExpandableTaskUiModel) {
         viewModelScope.launch {
             val domainTask = mapExpandableTaskUiModelToDomain(task)
-            taskRepository.deleteTask(domainTask).collect {
-                when(it) {
-                    is Result.Success -> _deleteTaskResult.emit(Result.Success(Unit))
-                    is Result.Error -> _deleteTaskResult.emit(Result.Error(it.message))
-                }
-            }
+            taskRepository.deleteTask(domainTask.id ?: 0)
+            _deleteTaskResult.emit(true)
         }
     }
 
     fun copyTasks(fromDay: Int, toDay: Int) {
         viewModelScope.launch {
-            taskRepository.copyTasks(fromDay, toDay).collect {
-                when(it) {
-                    is Result.Success -> _copyTasksResult.emit(Result.Success(Unit))
-                    is Result.Error -> _copyTasksResult.emit(Result.Error(it.message))
-                }
-            }
+            taskRepository.copyTasks(fromDay, toDay)
+            _copyTasksResult.emit(true)
         }
     }
 }

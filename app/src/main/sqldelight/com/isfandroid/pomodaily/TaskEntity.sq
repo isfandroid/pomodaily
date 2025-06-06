@@ -1,0 +1,83 @@
+CREATE TABLE TaskEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    dayOfWeek INTEGER NOT NULL,
+    `order` INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    pomodoroSessions INTEGER NOT NULL,
+    completedSessions INTEGER NOT NULL DEFAULT 0,
+    note TEXT
+);
+
+getTasksByDay:
+SELECT *
+FROM TaskEntity
+WHERE dayOfWeek = :dayId
+ORDER BY `order` ASC
+;
+
+getTaskById:
+SELECT *
+FROM TaskEntity
+WHERE id = :id
+;
+
+getUncompletedTaskByDay:
+SELECT *
+FROM TaskEntity
+WHERE dayOfWeek = :dayId
+AND completedSessions < pomodoroSessions
+ORDER BY `order` ASC
+LIMIT 1
+;
+
+-- SQLDelight will generate a function that returns a List<Long>. You'll need to map it to List<Int>.
+getDaysWithTasks:
+SELECT DISTINCT dayOfWeek
+FROM TaskEntity
+;
+
+-- SQLDelight generates a function returning a Query<Long>. You'll use .asFlow().mapToOne().map { it.toInt() }
+getTotalTasksByDay:
+SELECT COUNT(*)
+FROM TaskEntity
+WHERE dayOfWeek = :dayId
+;
+
+getMaxOrderForDay:
+SELECT MAX(`order`) AS maxOrder
+FROM TaskEntity
+WHERE dayOfWeek = :dayId
+;
+
+resetTasksCompletedSessionsForDay:
+UPDATE TaskEntity
+SET completedSessions = 0
+WHERE dayOfWeek = :dayId
+;
+
+updateTask:
+UPDATE TaskEntity
+SET `order` = :order,
+    name = :name,
+    pomodoroSessions = :pomodoroSessions,
+    completedSessions = :completedSessions,
+    note = :note
+WHERE id = :id
+;
+
+insertTask:
+INSERT OR IGNORE INTO TaskEntity(dayOfWeek, `order`, name, pomodoroSessions, completedSessions, note)
+VALUES (
+    :dayId,
+    :order,
+    :name,
+    :pomodoroSessions,
+    :completedSessions,
+    :note
+);
+
+deleteTaskById:
+DELETE
+FROM TaskEntity
+WHERE id = :id
+;

@@ -2,8 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
-import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
+import com.isfandroid.pomodaily.data.source.repository.pomodoro.PomodoroRepository
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_BREAKS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_POMODOROS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_BREAK_MINUTES
@@ -19,49 +18,48 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository,
     private val pomodoroRepository: PomodoroRepository,
 ): ViewModel() {
 
     // Timer
-    val pomodoroDuration = settingsRepository.pomodoroDuration
+    val pomodoroDuration = pomodoroRepository.getPomodoroDuration()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_POMODORO_MINUTES)
-    val breakDuration = settingsRepository.breakDuration
+    val breakDuration = pomodoroRepository.getBreakDuration()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_BREAK_MINUTES)
-    val longBreakDuration = settingsRepository.longBreakDuration
+    val longBreakDuration = pomodoroRepository.getLongBreakDuration()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_LONG_BREAK_MINUTES)
-    val longBreakInterval = settingsRepository.longBreakInterval
+    val longBreakInterval = pomodoroRepository.getLongBreakInterval()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_LONG_BREAK_INTERVAL)
-    val autoStartPomodoros = settingsRepository.autoStartPomodoros
+    val autoStartPomodoros = pomodoroRepository.getAutoStartPomodoros()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_AUTO_START_POMODOROS)
-    val autoStartBreaks = settingsRepository.autoStartBreaks
+    val autoStartBreaks = pomodoroRepository.getAutoStartBreaks()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_IN_TIMEOUT_MS), DEFAULT_AUTO_START_BREAKS)
 
     fun setPomodoroDuration(value: Int) {
         viewModelScope.launch {
-            settingsRepository.setPomodoroDuration(value)
+            pomodoroRepository.setPomodoroDuration(value)
             pomodoroRepository.resetTimerForCurrentType()
         }
     }
     fun setBreakDuration(value: Int) {
         viewModelScope.launch {
-            settingsRepository.setBreakDuration(value)
+            pomodoroRepository.setBreakDuration(value)
             pomodoroRepository.resetTimerForCurrentType()
         }
     }
     fun setLongBreakDuration(value: Int) {
         viewModelScope.launch {
-            settingsRepository.setLongBreakDuration(value)
+            pomodoroRepository.setLongBreakDuration(value)
             pomodoroRepository.resetTimerForCurrentType()
         }
     }
     fun setLongBreakInterval(value: Int) {
-        viewModelScope.launch { settingsRepository.setLongBreakInterval(value) }
+        viewModelScope.launch { pomodoroRepository.setLongBreakInterval(value) }
     }
     fun setAutoStartBreaks(value: Boolean) {
-        viewModelScope.launch { settingsRepository.setAutoStartBreaks(value) }
+        viewModelScope.launch { pomodoroRepository.setAutoStartBreaks(value) }
     }
     fun setAutoStartPomodoros(value: Boolean) {
-        viewModelScope.launch { settingsRepository.setAutoStartPomodoros(value) }
+        viewModelScope.launch { pomodoroRepository.setAutoStartPomodoros(value) }
     }
 }

@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.google.dagger.hilt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.sqldelight)
 }
 
 android {
@@ -44,6 +45,14 @@ android {
     }
 }
 
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.isfandroid.pomodaily")
+        }
+    }
+}
+
 dependencies {
 
     // CORE
@@ -59,16 +68,16 @@ dependencies {
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.lifecycle.service)
 
-    // DATA - DATASTORE
-    implementation(libs.androidx.datastore)
-
-    // DATA - ROOM
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
-
     // DI
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.compiler)
+
+    // DATA - DATASTORE
+    implementation(libs.androidx.datastore)
+
+    // DATA - SQLDelight
+    implementation(libs.sqldelight.driver)
+    implementation(libs.sqldelight.coroutines)
 
     // WORKER
     implementation(libs.androidx.work)

@@ -2,15 +2,14 @@ package com.isfandroid.pomodaily.presentation.feature.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
-import com.isfandroid.pomodaily.data.source.repository.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.pomodoro.PomodoroRepository
+import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.TaskScheduleUiModel
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.DateUtils.CURRENT_DAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -21,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
-    settingsRepository: SettingsRepository,
+    pomodoroRepository: PomodoroRepository,
 ): ViewModel() {
 
     val isTasksEmpty = taskRepository.getTasksByDay(CURRENT_DAY)
@@ -31,8 +30,8 @@ class ScheduleViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val todoTasks =
         combine(
-            taskRepository.activeTask,
-            settingsRepository.pomodoroDuration
+            taskRepository.getActiveTask(),
+            pomodoroRepository.getPomodoroDuration()
         ) { activeTask, pomodoroDuration ->
             Pair(activeTask, pomodoroDuration)
         }
@@ -72,7 +71,7 @@ class ScheduleViewModel @Inject constructor(
 
     fun setActiveTask(taskId: Int?) {
         viewModelScope.launch {
-            taskRepository.setActiveTask(taskId?.toLong()).collect()
+            taskRepository.updateActiveTaskId(taskId ?: 0)
         }
     }
 }

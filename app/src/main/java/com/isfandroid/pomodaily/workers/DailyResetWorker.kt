@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
-import com.isfandroid.pomodaily.data.source.repository.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.general.GeneralRepository
+import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
 import com.isfandroid.pomodaily.utils.DateUtils
 import com.isfandroid.pomodaily.utils.DateUtils.CURRENT_DAY
 import dagger.assisted.Assisted
@@ -16,30 +16,27 @@ import kotlinx.coroutines.flow.first
 class DailyResetWorker @AssistedInject constructor (
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val settingsRepository: SettingsRepository,
+    private val generalRepository: GeneralRepository,
     private val taskRepository: TaskRepository,
 ): CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
         val todayStartMillis = DateUtils.getTodayStartMillis()
-        val lastResetStartMillis = settingsRepository.lastResetDate.first()
+        val lastResetStartMillis = generalRepository.getLastResetDate().first()
 
         if (lastResetStartMillis == todayStartMillis) {
             return Result.success()
         }
 
         val lastMonthStartMillis = DateUtils.getLastMonthStartMillis()
-        val resetResult = taskRepository.resetTasksCompletedSessionsForDay(CURRENT_DAY).first()
-        val deleteResult = taskRepository.deleteTaskCompletionLogsOlderThan(lastMonthStartMillis).first()
+        taskRepository.deleteTaskCompletionLogsOlderThan(lastMonthStartMillis)
 
-        if (
-            resetResult !is com.isfandroid.pomodaily.data.resource.Result.Success ||
-            deleteResult !is com.isfandroid.pomodaily.data.resource.Result.Success
-        ) {
-            return Result.failure()
-        }
+        taskRepository.resetTasksCompletedSessionsForDay(CURRENT_DAY)
 
-        settingsRepository.setLastResetDate(todayStartMillis)
+        val nextActiveTask = taskRepository.getUncompletedTaskByDay(CURRENT_DAY).first()
+        if (nextActiveTask != null) taskRepository.updateActiveTaskId(nextActiveTask.id ?: 0)
+
+        generalRepository.setLastResetDate(todayStartMillis)
         return Result.success()
     }
 }

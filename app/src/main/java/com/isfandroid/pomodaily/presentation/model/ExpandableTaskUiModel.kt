@@ -2,7 +2,7 @@ package com.isfandroid.pomodaily.presentation.model
 
 data class ExpandableTaskUiModel(
     val id: Int?,
-    val dayOfWeek: Int?,
+    val dayOfWeek: Int,
     val order: Int?,
     val name: String?,
     val completedSessions: Int?,

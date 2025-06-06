@@ -2,7 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
+import com.isfandroid.pomodaily.data.source.repository.general.GeneralRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val repository: GeneralRepository
 ): ViewModel() {
 
     private val _isOnBoardingFinished = MutableSharedFlow<Boolean>()
@@ -19,7 +19,7 @@ class OnBoardingViewModel @Inject constructor(
 
     fun finishOnBoarding() {
         viewModelScope.launch {
-            settingsRepository.setIsOnBoardingDone(true)
+            repository.setIsOnBoardingDone(true)
             _isOnBoardingFinished.emit(true)
         }
     }

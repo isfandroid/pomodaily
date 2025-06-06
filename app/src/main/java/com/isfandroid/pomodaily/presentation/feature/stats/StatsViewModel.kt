@@ -2,7 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.stats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.source.repository.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.StatsUiModel
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.DateUtils
@@ -14,12 +14,14 @@ import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
-class StatsViewModel @Inject constructor(taskRepository: TaskRepository): ViewModel() {
+class StatsViewModel @Inject constructor(
+    taskRepository: TaskRepository
+): ViewModel() {
 
     val todayStats = combine(
-        taskRepository.totalTasksCompletedToday,
-        taskRepository.totalTasksCompletedYesterday,
-        taskRepository.totalTasksByDayMapped,
+        taskRepository.getTodayTotalCompletedTasks(),
+        taskRepository.getYesterdayTotalCompletedTasks(),
+        taskRepository.getTotalTasksByDay(),
     ) { totalCompletedTasks, totalPreviousCompletedTasks, totalTasksByDay->
         val totalTasks = calculateTotalTasksForPeriod(
             DateUtils.getTodayStartCalendar(),
@@ -47,9 +49,9 @@ class StatsViewModel @Inject constructor(taskRepository: TaskRepository): ViewMo
     )
 
     val thisWeekStats = combine(
-        taskRepository.totalTasksCompletedThisWeek,
-        taskRepository.totalTasksCompletedLastWeek,
-        taskRepository.totalTasksByDayMapped,
+        taskRepository.getThisWeekTotalCompletedTasks(),
+        taskRepository.getLastWeekTotalCompletedTasks(),
+        taskRepository.getTotalTasksByDay(),
     ) { totalCompletedTasks, totalPreviousCompletedTasks, totalTasksByDay ->
         val totalTasks = calculateTotalTasksForPeriod(
             DateUtils.getThisWeekStartCalendar(),
@@ -77,9 +79,9 @@ class StatsViewModel @Inject constructor(taskRepository: TaskRepository): ViewMo
     )
 
     val thisMonthStats = combine(
-        taskRepository.totalTasksCompletedThisMonth,
-        taskRepository.totalTasksCompletedLastMonth,
-        taskRepository.totalTasksByDayMapped,
+        taskRepository.getThisMonthTotalCompletedTasks(),
+        taskRepository.getLastMonthTotalCompletedTasks(),
+        taskRepository.getTotalTasksByDay(),
     ) { totalCompletedTasks, totalPreviousCompletedTasks, totalTasksByDay ->
         val totalTasks = calculateTotalTasksForPeriod(
             DateUtils.getThisMonthStartCalendar(),

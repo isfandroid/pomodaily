@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.isfandroid.pomodaily.R
-import com.isfandroid.pomodaily.data.resource.Result
 import com.isfandroid.pomodaily.databinding.FragmentTasksBinding
 import com.isfandroid.pomodaily.presentation.common.adapter.ExpandableTaskAdapter
 import com.isfandroid.pomodaily.presentation.common.helper.RecyclerViewLinearItemDecoration
@@ -56,7 +55,11 @@ class TasksFragment: Fragment() {
             },
             onSaveClick = {
                 viewModel.deleteNewTaskEntry()
-                viewModel.updateTask(it)
+                if (it.isNewEntry) {
+                    viewModel.insertTask(it)
+                } else {
+                    viewModel.updateTask(it)
+                }
                 viewModel.setExpandedTaskId(null)
             }
         )
@@ -174,63 +177,54 @@ class TasksFragment: Fragment() {
 
                 launch {
                     viewModel.updateTaskResult.collectLatest {
-                        when (it) {
-                            is Result.Error -> {
-                                showSnackbar(
-                                    view = binding.root,
-                                    message = getString(R.string.txt_msg_update_tasks_failed),
-                                    isError = true
-                                )
-                            }
-                            is Result.Success -> {
-                                showSnackbar(
-                                    view = binding.root,
-                                    message = getString(R.string.txt_msg_update_tasks_successful),
-                                    isError = false
-                                )
-                            }
+                        if (it) {
+                            showSnackbar(
+                                view = binding.root,
+                                message = getString(R.string.txt_msg_update_tasks_successful),
+                                isError = false
+                            )
+                        } else {
+                            showSnackbar(
+                                view = binding.root,
+                                message = getString(R.string.txt_msg_update_tasks_failed),
+                                isError = true
+                            )
                         }
                     }
                 }
 
                 launch {
                     viewModel.deleteTaskResult.collectLatest {
-                        when (it) {
-                            is Result.Error -> {
-                                showSnackbar(
-                                    view = binding.root,
-                                    message = getString(R.string.txt_msg_delete_task_failed),
-                                    isError = true
-                                )
-                            }
-                            is Result.Success -> {
-                                showSnackbar(
-                                    view = binding.root,
-                                    message = getString(R.string.txt_msg_delete_task_successful),
-                                    isError = false
-                                )
-                            }
+                        if (it) {
+                            showSnackbar(
+                                view = binding.root,
+                                message = getString(R.string.txt_msg_delete_task_successful),
+                                isError = false
+                            )
+                        } else {
+                            showSnackbar(
+                                view = binding.root,
+                                message = getString(R.string.txt_msg_delete_task_failed),
+                                isError = true
+                            )
                         }
                     }
                 }
 
                 launch {
                     viewModel.copyTasksResult.collectLatest {
-                        when (it) {
-                            is Result.Error -> {
-                                showSnackbar(
-                                    view = binding.root,
-                                    message = getString(R.string.txt_msg_copy_tasks_failed),
-                                    isError = true
-                                )
-                            }
-                            is Result.Success -> {
-                                showSnackbar(
-                                    view = binding.root,
-                                    message = getString(R.string.txt_msg_add_tasks_successful),
-                                    isError = false
-                                )
-                            }
+                        if (it) {
+                            showSnackbar(
+                                view = binding.root,
+                                message = getString(R.string.txt_msg_copy_tasks_failed),
+                                isError = false
+                            )
+                        } else {
+                            showSnackbar(
+                                view = binding.root,
+                                message = getString(R.string.txt_msg_add_tasks_successful),
+                                isError = true
+                            )
                         }
                     }
                 }

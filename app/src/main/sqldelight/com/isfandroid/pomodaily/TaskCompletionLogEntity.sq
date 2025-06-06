@@ -1,0 +1,27 @@
+CREATE TABLE TaskCompletionLogEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    taskId INTEGER NOT NULL,
+    completionDate INTEGER NOT NULL,
+    FOREIGN KEY(taskId) REFERENCES TaskEntity(id) ON DELETE CASCADE
+);
+
+getTotalLogsBetween:
+SELECT COUNT(*) FROM TaskCompletionLogEntity
+WHERE completionDate >= :startTimeMillis
+AND completionDate <= :endTimeMillis
+;
+
+insertLog:
+INSERT INTO TaskCompletionLogEntity (taskId, completionDate)
+VALUES (:taskId, :completionDate)
+;
+
+deleteLogsByTaskId:
+DELETE FROM TaskCompletionLogEntity
+WHERE taskId = :taskId
+;
+
+deleteLogsOlderThan:
+DELETE FROM TaskCompletionLogEntity
+WHERE completionDate < :cutoffTimestampMillis
+;

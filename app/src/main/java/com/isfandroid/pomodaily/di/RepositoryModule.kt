@@ -1,28 +1,33 @@
 package com.isfandroid.pomodaily.di
 
-import com.isfandroid.pomodaily.data.source.local.LocalDataSource
-import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
-import com.isfandroid.pomodaily.data.source.repository.SettingsRepository
-import com.isfandroid.pomodaily.data.source.repository.TaskRepository
+import com.isfandroid.pomodaily.data.source.local.general.GeneralLocalDataSource
+import com.isfandroid.pomodaily.data.source.local.pomodoro.PomodoroLocalDataSource
+import com.isfandroid.pomodaily.data.source.local.task.TaskLocalDataSource
+import com.isfandroid.pomodaily.data.source.repository.general.GeneralRepository
+import com.isfandroid.pomodaily.data.source.repository.general.GeneralRepositoryImpl
+import com.isfandroid.pomodaily.data.source.repository.pomodoro.PomodoroRepository
+import com.isfandroid.pomodaily.data.source.repository.pomodoro.PomodoroRepositoryImpl
+import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.task.TaskRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@InstallIn(SingletonComponent::class)
 @Module
-class RepositoryModule {
+@InstallIn(SingletonComponent::class)
+object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideSettingsRepository(localDataSource: LocalDataSource) = SettingsRepository(localDataSource)
+    fun provideGeneralRepository(localDataSource: GeneralLocalDataSource): GeneralRepository = GeneralRepositoryImpl(localDataSource)
 
     @Provides
     @Singleton
-    fun provideTaskRepository(localDataSource: LocalDataSource) = TaskRepository(localDataSource)
+    fun providePomodoroRepository(localDataSource: PomodoroLocalDataSource): PomodoroRepository = PomodoroRepositoryImpl(localDataSource)
 
     @Provides
     @Singleton
-    fun providePomodoroRepository(localDataSource: LocalDataSource) = PomodoroRepository(localDataSource)
+    fun provideTaskRepository(localDataSource: TaskLocalDataSource): TaskRepository = TaskRepositoryImpl(localDataSource)
 }
