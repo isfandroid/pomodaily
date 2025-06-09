@@ -232,14 +232,18 @@ class PomodoroFragment: Fragment() {
                                 tvActiveTaskSessions.visibility = View.VISIBLE
                                 tvActiveTaskRemainingTime.visibility = View.VISIBLE
 
+                                val remainingMinutes = (it.pomodoroSessions - it.completedSessions) * viewModel.pomodoroDuration.value
                                 tvActiveTaskName.text = it.name
                                 tvActiveTaskSessions.text = getString(
                                     R.string.txt_value_task_sessions,
                                     it.completedSessions,
                                     it.pomodoroSessions
                                 )
-                                val remainingMinutes = (it.pomodoroSessions - it.completedSessions) * viewModel.pomodoroDuration.value
-                                tvActiveTaskRemainingTime.text = getString(R.string.txt_value_minutes_left, remainingMinutes)
+                                tvActiveTaskRemainingTime.text = if (remainingMinutes == 0) {
+                                    getString(R.string.txt_done)
+                                } else {
+                                    getString(R.string.txt_value_minutes_left, remainingMinutes)
+                                }
                             }
                         }
                     }

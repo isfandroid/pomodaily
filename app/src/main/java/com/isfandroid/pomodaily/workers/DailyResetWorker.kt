@@ -34,7 +34,11 @@ class DailyResetWorker @AssistedInject constructor (
         taskRepository.resetTasksCompletedSessionsForDay(CURRENT_DAY)
 
         val nextActiveTask = taskRepository.getUncompletedTaskByDay(CURRENT_DAY).first()
-        if (nextActiveTask != null) taskRepository.updateActiveTaskId(nextActiveTask.id ?: 0)
+        if (nextActiveTask != null) {
+            taskRepository.updateActiveTaskId(nextActiveTask.id ?: 0)
+        } else {
+            taskRepository.updateActiveTaskId( 0)
+        }
 
         generalRepository.setLastResetDate(todayStartMillis)
         return Result.success()
