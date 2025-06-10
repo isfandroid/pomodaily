@@ -281,30 +281,11 @@ class PomodoroService: Service() {
                 // Increment pomodoro count by 1
                 pomodoroRepository.setPomodoroCount(pomodoroCount + 1)
 
-                // Active Task config (if any)
                 if (activeTask != null) {
-                    // Increment completed sessions
                     val updatedTask = activeTask.copy(
                         completedSessions = activeTask.completedSessions + 1
                     )
                     taskRepository.updateTask(updatedTask)
-
-                    // Add new completion log entry if completed
-                    if (activeTask.completedSessions == activeTask.pomodoroSessions) {
-                        taskRepository.insertTaskCompletionLog(
-                            TaskCompletionLog(
-                                taskId = (activeTask.id ?: 0).toLong(),
-                                completionDate = Calendar.getInstance().timeInMillis
-                            )
-                        )
-                    }
-
-                    // Set next active task (if there any tasks with uncompleted sessions)
-                    if (uncompletedTask != null) {
-                        taskRepository.updateActiveTaskId(uncompletedTask.id ?: 0)
-                    } else {
-                        taskRepository.updateActiveTaskId(0)
-                    }
                 }
 
                 // Set next break type & timer
@@ -332,6 +313,25 @@ class PomodoroService: Service() {
                 // Set type to pomodoro & reset timer
                 pomodoroRepository.setTimerType(TIMER_TYPE_POMODORO)
                 pomodoroRepository.resetTimerForCurrentType()
+
+                if (activeTask != null) {
+                    // Add new completion log entry if active task is completed
+                    if (activeTask.completedSessions == activeTask.pomodoroSessions) {
+                        taskRepository.insertTaskCompletionLog(
+                            TaskCompletionLog(
+                                taskId = (activeTask.id ?: 0).toLong(),
+                                completionDate = Calendar.getInstance().timeInMillis
+                            )
+                        )
+                    }
+
+                    // Set next active task (if theres any uncompleted session)
+                    if (uncompletedTask != null) {
+                        taskRepository.updateActiveTaskId(uncompletedTask.id ?: 0)
+                    } else {
+                        taskRepository.updateActiveTaskId(0)
+                    }
+                }
 
                 // Set how to start/stop pomodoro
                 if (autoStartPomodoros) {
