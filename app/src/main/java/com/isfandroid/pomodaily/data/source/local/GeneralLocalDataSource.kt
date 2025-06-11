@@ -1,4 +1,4 @@
-package com.isfandroid.pomodaily.data.source.local.general
+package com.isfandroid.pomodaily.data.source.local
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -11,15 +11,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class GeneralLocalDataSourceImpl (
+class GeneralLocalDataSource (
     private val dataStore: DataStore<Preferences>
-): GeneralLocalDataSource {
+) {
 
-    override fun getIsOnBoardingDone() = dataStore.data.map { prefs ->
+    fun getIsOnBoardingDone() = dataStore.data.map { prefs ->
         prefs[booleanPreferencesKey(PREFS_KEY_IS_ON_BOARDING_DONE)] ?: false
     }
 
-    override suspend fun setIsOnBoardingDone(value: Boolean) {
+    suspend fun setIsOnBoardingDone(value: Boolean) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[booleanPreferencesKey(PREFS_KEY_IS_ON_BOARDING_DONE)] = value
@@ -27,11 +27,11 @@ class GeneralLocalDataSourceImpl (
         }
     }
 
-    override fun getLastResetDate() = dataStore.data.map { prefs ->
+    fun getLastResetDate() = dataStore.data.map { prefs ->
         prefs[longPreferencesKey(PREFS_KEY_LAST_RESET_DATE)] ?: 0L
     }
 
-    override suspend fun setLastResetDate(value: Long) {
+    suspend fun setLastResetDate(value: Long) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[longPreferencesKey(PREFS_KEY_LAST_RESET_DATE)] = value

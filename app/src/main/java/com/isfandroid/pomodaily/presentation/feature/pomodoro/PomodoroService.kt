@@ -23,8 +23,8 @@ import androidx.core.app.NotificationManagerCompat
 import com.isfandroid.pomodaily.R
 import com.isfandroid.pomodaily.data.model.TaskCompletionLog
 import com.isfandroid.pomodaily.data.model.TimerData
-import com.isfandroid.pomodaily.data.source.repository.pomodoro.PomodoroRepository
-import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
+import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.feature.main.MainActivity
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_ID
 import com.isfandroid.pomodaily.utils.Constant.POMODORO_ALERT_CHANNEL_NAME

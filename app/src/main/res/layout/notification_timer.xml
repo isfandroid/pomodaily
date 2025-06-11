@@ -21,14 +21,14 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="24sp"
-            android:textColor="@color/white"
+            android:textColor="@color/light_primary"
             tools:text="25:00"
             />
         <TextView
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/light_primary"
             tools:text="Stay focused"
             />
     </LinearLayout>
@@ -46,7 +46,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/txt_restart"
-            android:src="@drawable/ic_restart_24"
+            android:src="@drawable/ic_restart_24_primary"
             />
 
         <ImageView
@@ -55,7 +55,7 @@
             android:layout_height="32dp"
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/txt_start"
-            android:src="@drawable/ic_play_24"
+            android:src="@drawable/ic_play_24_primary"
             />
         <ImageView
             android:id="@+id/btn_pause"
@@ -64,7 +64,7 @@
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/txt_pause"
             android:visibility="gone"
-            android:src="@drawable/ic_pause_24"
+            android:src="@drawable/ic_pause_24_primary"
             />
         <ImageView
             android:id="@+id/btn_resume"
@@ -73,7 +73,7 @@
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/txt_resume"
             android:visibility="gone"
-            android:src="@drawable/ic_resume_24"
+            android:src="@drawable/ic_resume_24_primary"
             />
 
         <ImageView
@@ -82,7 +82,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/txt_skip"
-            android:src="@drawable/ic_skip_forward_24"
+            android:src="@drawable/ic_skip_forward_24_primary"
             />
     </LinearLayout>
 

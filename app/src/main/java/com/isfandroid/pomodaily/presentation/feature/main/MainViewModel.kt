@@ -2,7 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.source.repository.general.GeneralRepository
+import com.isfandroid.pomodaily.data.source.repository.GeneralRepository
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_ON_BOARDING
 import com.isfandroid.pomodaily.utils.Constant.NAV_DESTINATION_POMODORO
 import dagger.hilt.android.lifecycle.HiltViewModel

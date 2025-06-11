@@ -2,7 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.stats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.presentation.model.StatsUiModel
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.DateUtils

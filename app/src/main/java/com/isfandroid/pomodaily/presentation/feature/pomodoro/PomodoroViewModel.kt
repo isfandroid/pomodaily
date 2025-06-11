@@ -3,8 +3,8 @@ package com.isfandroid.pomodaily.presentation.feature.pomodoro
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.isfandroid.pomodaily.data.model.TimerData
-import com.isfandroid.pomodaily.data.source.repository.pomodoro.PomodoroRepository
-import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
+import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_POMODORO_MINUTES
 import com.isfandroid.pomodaily.utils.Constant.STATE_IN_TIMEOUT_MS
 import com.isfandroid.pomodaily.utils.Constant.TIMER_STATE_IDLE

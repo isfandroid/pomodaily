@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.isfandroid.pomodaily.data.source.repository.general.GeneralRepository
-import com.isfandroid.pomodaily.data.source.repository.task.TaskRepository
+import com.isfandroid.pomodaily.data.source.repository.GeneralRepository
+import com.isfandroid.pomodaily.data.source.repository.TaskRepository
 import com.isfandroid.pomodaily.utils.DateUtils
 import com.isfandroid.pomodaily.utils.DateUtils.CURRENT_DAY
 import dagger.assisted.Assisted

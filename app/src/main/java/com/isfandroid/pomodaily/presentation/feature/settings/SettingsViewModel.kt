@@ -2,7 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.source.repository.pomodoro.PomodoroRepository
+import com.isfandroid.pomodaily.data.source.repository.PomodoroRepository
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_BREAKS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_AUTO_START_POMODOROS
 import com.isfandroid.pomodaily.utils.Constant.DEFAULT_BREAK_MINUTES

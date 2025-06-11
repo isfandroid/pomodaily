@@ -2,7 +2,7 @@ package com.isfandroid.pomodaily.presentation.feature.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.isfandroid.pomodaily.data.source.repository.general.GeneralRepository
+import com.isfandroid.pomodaily.data.source.repository.GeneralRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

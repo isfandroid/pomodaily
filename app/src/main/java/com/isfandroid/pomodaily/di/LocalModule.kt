@@ -9,12 +9,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.isfandroid.pomodaily.AppDatabase
-import com.isfandroid.pomodaily.data.source.local.general.GeneralLocalDataSource
-import com.isfandroid.pomodaily.data.source.local.general.GeneralLocalDataSourceImpl
-import com.isfandroid.pomodaily.data.source.local.pomodoro.PomodoroLocalDataSource
-import com.isfandroid.pomodaily.data.source.local.pomodoro.PomodoroLocalDataSourceImpl
-import com.isfandroid.pomodaily.data.source.local.task.TaskLocalDataSource
-import com.isfandroid.pomodaily.data.source.local.task.TaskLocalDataSourceImpl
+import com.isfandroid.pomodaily.data.source.local.GeneralLocalDataSource
+import com.isfandroid.pomodaily.data.source.local.PomodoroLocalDataSource
+import com.isfandroid.pomodaily.data.source.local.TaskLocalDataSource
 import com.isfandroid.pomodaily.utils.Constant.APP_PREFS
 import com.isfandroid.pomodaily.utils.Constant.DB_NAME
 import dagger.Module
@@ -53,22 +50,16 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun provideGeneralDataSource(dataStore: DataStore<Preferences>): GeneralLocalDataSource {
-        return GeneralLocalDataSourceImpl(dataStore)
-    }
+    fun provideGeneralDataSource(dataStore: DataStore<Preferences>) = GeneralLocalDataSource(dataStore)
 
     @Provides
     @Singleton
-    fun providePomodoroDataSource(dataStore: DataStore<Preferences>): PomodoroLocalDataSource {
-        return PomodoroLocalDataSourceImpl(dataStore)
-    }
+    fun providePomodoroDataSource(dataStore: DataStore<Preferences>) = PomodoroLocalDataSource(dataStore)
 
     @Provides
     @Singleton
-    fun provideTaskDataSource(dataStore: DataStore<Preferences>, driver: SqlDriver): TaskLocalDataSource {
-        return TaskLocalDataSourceImpl(
-            dataStore,
-            AppDatabase(driver)
-        )
-    }
+    fun provideTaskDataSource(
+        dataStore: DataStore<Preferences>,
+        driver: SqlDriver
+    ) = TaskLocalDataSource(dataStore, AppDatabase(driver))
 }

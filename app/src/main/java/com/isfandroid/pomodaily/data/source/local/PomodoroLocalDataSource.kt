@@ -1,4 +1,4 @@
-package com.isfandroid.pomodaily.data.source.local.pomodoro
+package com.isfandroid.pomodaily.data.source.local
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -23,15 +23,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class PomodoroLocalDataSourceImpl (
+class PomodoroLocalDataSource (
     private val dataStore: DataStore<Preferences>
-): PomodoroLocalDataSource {
+) {
 
-    override fun getPomodoroCount() = dataStore.data.map { prefs ->
+    fun getPomodoroCount() = dataStore.data.map { prefs ->
         prefs[intPreferencesKey(PREFS_KEY_POMODORO_COUNT)] ?: DEFAULT_POMODORO_COUNT
     }
 
-    override suspend fun setPomodoroCount(value: Int) {
+    suspend fun setPomodoroCount(value: Int) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[intPreferencesKey(PREFS_KEY_POMODORO_COUNT)] = value
@@ -39,11 +39,11 @@ class PomodoroLocalDataSourceImpl (
         }
     }
 
-    override fun getPomodoroDuration() = dataStore.data.map { prefs ->
+    fun getPomodoroDuration() = dataStore.data.map { prefs ->
         prefs[intPreferencesKey(PREFS_KEY_POMODORO_DURATION)] ?: DEFAULT_POMODORO_MINUTES
     }
 
-    override suspend fun setPomodoroDuration(value: Int) {
+    suspend fun setPomodoroDuration(value: Int) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[intPreferencesKey(PREFS_KEY_POMODORO_DURATION)] = value
@@ -51,11 +51,11 @@ class PomodoroLocalDataSourceImpl (
         }
     }
 
-    override fun getBreakDuration() = dataStore.data.map { prefs ->
+    fun getBreakDuration() = dataStore.data.map { prefs ->
         prefs[intPreferencesKey(PREFS_KEY_BREAK_DURATION)] ?: DEFAULT_BREAK_MINUTES
     }
 
-    override suspend fun setBreakDuration(value: Int) {
+    suspend fun setBreakDuration(value: Int) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[intPreferencesKey(PREFS_KEY_BREAK_DURATION)] = value
@@ -63,11 +63,11 @@ class PomodoroLocalDataSourceImpl (
         }
     }
 
-    override fun getLongBreakDuration() = dataStore.data.map { prefs ->
+    fun getLongBreakDuration() = dataStore.data.map { prefs ->
         prefs[intPreferencesKey(PREFS_KEY_LONG_BREAK_DURATION)] ?: DEFAULT_LONG_BREAK_MINUTES
     }
 
-    override suspend fun setLongBreakDuration(value: Int) {
+    suspend fun setLongBreakDuration(value: Int) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[intPreferencesKey(PREFS_KEY_LONG_BREAK_DURATION)] = value
@@ -75,11 +75,11 @@ class PomodoroLocalDataSourceImpl (
         }
     }
 
-    override fun getLongBreakInterval() = dataStore.data.map { prefs ->
+    fun getLongBreakInterval() = dataStore.data.map { prefs ->
         prefs[intPreferencesKey(PREFS_KEY_LONG_BREAK_INTERVAL)] ?: DEFAULT_LONG_BREAK_INTERVAL
     }
 
-    override suspend fun setLongBreakInterval(value: Int) {
+    suspend fun setLongBreakInterval(value: Int) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[intPreferencesKey(PREFS_KEY_LONG_BREAK_INTERVAL)] = value
@@ -87,11 +87,11 @@ class PomodoroLocalDataSourceImpl (
         }
     }
 
-    override fun getAutoStartPomodoros() = dataStore.data.map { prefs ->
+    fun getAutoStartPomodoros() = dataStore.data.map { prefs ->
         prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_POMODOROS)] ?: DEFAULT_AUTO_START_POMODOROS
     }
 
-    override suspend fun setAutoStartPomodoros(value: Boolean) {
+    suspend fun setAutoStartPomodoros(value: Boolean) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_POMODOROS)] = value
@@ -99,11 +99,11 @@ class PomodoroLocalDataSourceImpl (
         }
     }
 
-    override fun getAutoStartBreaks() = dataStore.data.map { prefs ->
+    fun getAutoStartBreaks() = dataStore.data.map { prefs ->
         prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_BREAKS)] ?: DEFAULT_AUTO_START_BREAKS
     }
 
-    override suspend fun setAutoStartBreaks(value: Boolean) {
+    suspend fun setAutoStartBreaks(value: Boolean) {
         withContext(Dispatchers.IO) {
             dataStore.edit { prefs ->
                 prefs[booleanPreferencesKey(PREFS_KEY_SETTINGS_AUTO_START_BREAKS)] = value
